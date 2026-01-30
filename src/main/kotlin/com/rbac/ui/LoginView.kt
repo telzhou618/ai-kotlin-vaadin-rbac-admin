@@ -3,6 +3,7 @@ package com.rbac.ui
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
+import com.rbac.ui.view.DashboardView
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -78,7 +79,7 @@ class LoginView(
                 
                 if (authService.login(form.username, form.password)) {
                     exceptionHandler.showSuccess("登录成功")
-                    UI.getCurrent().navigate(MainLayout::class.java)
+                    UI.getCurrent().navigate(DashboardView::class.java)
                 } else {
                     exceptionHandler.showError("用户名或密码错误")
                 }

@@ -5,6 +5,10 @@ USE rbac_db;
 INSERT INTO `sys_user` (`username`, `password`, `status`)
 VALUES ('admin', '0192023a7bbd73250516f069df18b500', 1);
 
+-- 插入测试普通用户 (用户名: test, 密码: test123 的MD5值)
+INSERT INTO `sys_user` (`username`, `password`, `status`)
+VALUES ('test', 'cc03e747a6afbbcbf8be7668acfebee5', 1);
+
 -- 插入默认角色
 INSERT INTO `sys_role` (`role_code`, `role_name`, `role_desc`)
 VALUES ('admin', '超级管理员', '拥有所有权限'),
@@ -37,7 +41,17 @@ VALUES ('system', '系统管理', 0),
 INSERT INTO `sys_user_role` (`user_id`, `role_id`)
 VALUES (1, 1);
 
+-- 为测试用户分配普通用户角色
+INSERT INTO `sys_user_role` (`user_id`, `role_id`)
+VALUES (2, 2);
+
 -- 为管理员角色分配所有权限
 INSERT INTO `sys_role_permission` (`role_id`, `perm_id`)
 SELECT 1, id
 FROM `sys_permission`;
+
+-- 为普通用户角色分配部分权限（只能查看用户和日志）
+INSERT INTO `sys_role_permission` (`role_id`, `perm_id`)
+VALUES (2, 3),  -- system:user:view
+       (2, 19); -- system:log:view
+

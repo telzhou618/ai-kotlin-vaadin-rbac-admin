@@ -65,12 +65,29 @@ class MainLayout(
     }
     
     private fun createDrawer() {
-        val nav = SideNav().apply {
-            addItem(SideNavItem("首页", DashboardView::class.java, VaadinIcon.DASHBOARD.create()))
-            addItem(SideNavItem("用户管理", UserListView::class.java, VaadinIcon.USER.create()))
-            addItem(SideNavItem("角色管理", RoleListView::class.java, VaadinIcon.GROUP.create()))
-            addItem(SideNavItem("权限管理", PermissionTreeView::class.java, VaadinIcon.LOCK.create()))
-            addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
+        val nav = SideNav()
+        
+        // 首页 - 所有登录用户都可以访问
+        nav.addItem(SideNavItem("首页", DashboardView::class.java, VaadinIcon.DASHBOARD.create()))
+        
+        // 用户管理 - 需要 system:user:view 权限
+        if (StpUtil.hasPermission("system:user:view")) {
+            nav.addItem(SideNavItem("用户管理", UserListView::class.java, VaadinIcon.USER.create()))
+        }
+        
+        // 角色管理 - 需要 system:role:view 权限
+        if (StpUtil.hasPermission("system:role:view")) {
+            nav.addItem(SideNavItem("角色管理", RoleListView::class.java, VaadinIcon.GROUP.create()))
+        }
+        
+        // 权限管理 - 需要 system:permission:view 权限
+        if (StpUtil.hasPermission("system:permission:view")) {
+            nav.addItem(SideNavItem("权限管理", PermissionTreeView::class.java, VaadinIcon.LOCK.create()))
+        }
+        
+        // 操作日志 - 需要 system:log:view 权限
+        if (StpUtil.hasPermission("system:log:view")) {
+            nav.addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
         }
         
         addToDrawer(nav)

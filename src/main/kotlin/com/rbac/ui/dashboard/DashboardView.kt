@@ -2,6 +2,7 @@ package com.rbac.ui.dashboard
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.config.DateFormatConfig
+import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
@@ -67,16 +68,19 @@ class DashboardView(
             
             h3("最近操作日志")
             
-            val grid = Grid(com.rbac.entity.SysOperationLog::class.java, false).apply {
+            val grid = Grid(SysOperationLog::class.java, false).apply {
                 addColumn { it.username }.setHeader("用户")
                 addColumn { it.module }.setHeader("模块")
                 addColumn { it.operation }.setHeader("操作")
-                addColumn { it.responseCode }.setHeader("状态")
-                
+                addColumn { it.responseCode }.setHeader("状态码")
+                addColumn { it.responseMsg }.setHeader("响应消息")
+                addColumn { it.ip }.setHeader("IP")
+                addColumn { it.executeTime }.setHeader("耗时(ms)")
+
                 // 格式化日期时间列
                 addColumn { log ->
                     DateFormatConfig.formatDateTime(log.createTime)
-                }.setHeader("时间").width = "180px"
+                }.setHeader("操作时间").width = "180px"
                 
                 setItems(logService.getRecentLogs(10))
             }

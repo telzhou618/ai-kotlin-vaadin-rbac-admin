@@ -1,6 +1,7 @@
 package com.rbac.ui.dashboard
 
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.config.DateFormatConfig
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
@@ -71,7 +72,12 @@ class DashboardView(
                 addColumn { it.module }.setHeader("模块")
                 addColumn { it.operation }.setHeader("操作")
                 addColumn { it.responseCode }.setHeader("状态")
-                addColumn { it.createTime }.setHeader("时间")
+                
+                // 格式化日期时间列
+                addColumn { log ->
+                    DateFormatConfig.formatDateTime(log.createTime)
+                }.setHeader("时间").width = "180px"
+                
                 setItems(logService.getRecentLogs(10))
             }
             add(grid)

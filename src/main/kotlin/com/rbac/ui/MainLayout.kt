@@ -2,9 +2,9 @@ package com.rbac.ui
 
 import cn.dev33.satoken.stp.StpUtil
 import com.github.mvysny.karibudsl.v10.*
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
+import com.rbac.util.NotificationUtil
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
@@ -26,8 +26,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility
 @Route("")
 class MainLayout(
     private val authService: AuthService,
-    private val userService: SysUserService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val userService: SysUserService
 ) : AppLayout() {
     
     init {
@@ -80,12 +79,8 @@ class MainLayout(
     }
     
     private fun handleLogout() {
-        try {
-            authService.logout()
-            exceptionHandler.showSuccess("退出成功")
-            UI.getCurrent().navigate(LoginView::class.java)
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
+        authService.logout()
+        NotificationUtil.showSuccess("退出成功")
+        UI.getCurrent().navigate(LoginView::class.java)
     }
 }

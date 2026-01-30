@@ -3,8 +3,8 @@ package com.rbac.ui.role
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysRoleService
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.textfield.TextArea
@@ -15,7 +15,6 @@ import com.vaadin.flow.data.validator.StringLengthValidator
 class RoleFormDialog(
     private val role: SysRole?,
     private val roleService: SysRoleService,
-    private val exceptionHandler: GlobalExceptionHandler,
     private val onSuccess: () -> Unit
 ) : Dialog() {
     
@@ -83,23 +82,19 @@ class RoleFormDialog(
     }
     
     private fun handleSave() {
-        try {
-            if (binder.validate().isOk) {
-                val dto = RoleDto(id = role?.id)
-                binder.writeBean(dto)
-                
-                if (role == null) {
-                    roleService.saveRole(dto)
-                } else {
-                    roleService.updateRole(dto)
-                }
-                
-                exceptionHandler.showSuccess("保存成功")
-                close()
-                onSuccess()
+        if (binder.validate().isOk) {
+            val dto = RoleDto(id = role?.id)
+            binder.writeBean(dto)
+            
+            if (role == null) {
+                roleService.saveRole(dto)
+            } else {
+                roleService.updateRole(dto)
             }
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
+            
+            NotificationUtil.showSuccess("保存成功")
+            close()
+            onSuccess()
         }
     }
 }

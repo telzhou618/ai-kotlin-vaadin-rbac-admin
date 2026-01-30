@@ -1,9 +1,9 @@
 package com.rbac.ui
 
 import com.github.mvysny.karibudsl.v10.*
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
 import com.rbac.ui.dashboard.DashboardView
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -22,8 +22,7 @@ data class LoginForm(
 @Route("login")
 @AnonymousAllowed
 class LoginView(
-    private val authService: AuthService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val authService: AuthService
 ) : VerticalLayout() {
     
     private lateinit var usernameField: TextField
@@ -72,20 +71,16 @@ class LoginView(
     }
     
     private fun handleLogin() {
-        try {
-            if (binder.validate().isOk) {
-                val form = LoginForm()
-                binder.writeBean(form)
-                
-                if (authService.login(form.username, form.password)) {
-                    exceptionHandler.showSuccess("登录成功")
-                    UI.getCurrent().navigate(DashboardView::class.java)
-                } else {
-                    exceptionHandler.showError("用户名或密码错误")
-                }
+        if (binder.validate().isOk) {
+            val form = LoginForm()
+            binder.writeBean(form)
+            
+            if (authService.login(form.username, form.password)) {
+                NotificationUtil.showSuccess("登录成功")
+                UI.getCurrent().navigate(DashboardView::class.java)
+            } else {
+                NotificationUtil.showError("用户名或密码错误")
             }
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
         }
     }
 }

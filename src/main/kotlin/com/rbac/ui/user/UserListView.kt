@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.UserDto
 import com.rbac.dto.UserQueryDto
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysUserService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -21,8 +21,7 @@ import com.vaadin.flow.router.Route
 @Route("users", layout = MainLayout::class)
 @PageTitle("用户管理")
 class UserListView(
-    private val userService: SysUserService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val userService: SysUserService
 ) : VerticalLayout() {
     
     private lateinit var searchField: TextField
@@ -93,33 +92,25 @@ class UserListView(
     }
     
     private fun loadData(page: Long, size: Int) {
-        try {
-            val query = UserQueryDto(username = searchField.value?.trim()?.takeIf { it.isNotBlank() })
-            val pageData = userService.pageQuery(Page(page, size.toLong()), query)
-            
-            val userDtos = pageData.records.map { userService.getUserDto(it) }
-            grid.setItems(userDtos)
-            pagination.updatePagination(pageData.current, pageData.pages)
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
+        val query = UserQueryDto(username = searchField.value?.trim()?.takeIf { it.isNotBlank() })
+        val pageData = userService.pageQuery(Page(page, size.toLong()), query)
+        
+        val userDtos = pageData.records.map { userService.getUserDto(it) }
+        grid.setItems(userDtos)
+        pagination.updatePagination(pageData.current, pageData.pages)
     }
     
     private fun showFormDialog(user: UserDto?) {
-        UserFormDialog(user, userService, userService.roleService, exceptionHandler) {
+        UserFormDialog(user, userService, userService.roleService) {
             loadData(1, 10)
         }.open()
     }
     
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该用户吗？") {
-            try {
-                userService.deleteUser(id)
-                exceptionHandler.showSuccess("删除成功")
-                loadData(1, 10)
-            } catch (e: Exception) {
-                exceptionHandler.handle(e)
-            }
+            userService.deleteUser(id)
+            NotificationUtil.showSuccess("删除成功")
+            loadData(1, 10)
         }
     }
 }

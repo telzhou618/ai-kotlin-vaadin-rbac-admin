@@ -2,8 +2,8 @@ package com.rbac.ui.permission
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.PermissionDto
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysPermissionService
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.textfield.TextField
@@ -14,7 +14,6 @@ class PermissionFormDialog(
     private val perm: PermissionDto?,
     private val parentId: Long,
     private val permissionService: SysPermissionService,
-    private val exceptionHandler: GlobalExceptionHandler,
     private val onSuccess: () -> Unit
 ) : Dialog() {
     
@@ -65,23 +64,19 @@ class PermissionFormDialog(
     }
     
     private fun handleSave() {
-        try {
-            if (binder.validate().isOk) {
-                val dto = PermissionDto(id = perm?.id, parentId = parentId)
-                binder.writeBean(dto)
-                
-                if (perm == null) {
-                    permissionService.savePerm(dto)
-                } else {
-                    permissionService.updatePerm(dto)
-                }
-                
-                exceptionHandler.showSuccess("保存成功")
-                close()
-                onSuccess()
+        if (binder.validate().isOk) {
+            val dto = PermissionDto(id = perm?.id, parentId = parentId)
+            binder.writeBean(dto)
+            
+            if (perm == null) {
+                permissionService.savePerm(dto)
+            } else {
+                permissionService.updatePerm(dto)
             }
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
+            
+            NotificationUtil.showSuccess("保存成功")
+            close()
+            onSuccess()
         }
     }
 }

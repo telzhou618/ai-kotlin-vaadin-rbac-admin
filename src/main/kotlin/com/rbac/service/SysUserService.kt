@@ -53,6 +53,7 @@ class SysUserService(
     @OperationLog(module = "用户管理", operation = "修改")
     @Transactional
     fun updateUser(dto: UserDto) {
+        println(1/0)
         val user = getById(dto.id) ?: throw RuntimeException("用户不存在")
         user.username = dto.username
         user.status = dto.status

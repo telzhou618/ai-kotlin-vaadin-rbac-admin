@@ -3,6 +3,7 @@ package com.rbac.config
 import cn.dev33.satoken.exception.NotLoginException
 import cn.dev33.satoken.exception.NotPermissionException
 import cn.dev33.satoken.stp.StpUtil
+import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.ui.AccessDeniedView
 import com.rbac.ui.LoginView
 import com.vaadin.flow.router.BeforeEnterEvent
@@ -12,10 +13,15 @@ import com.vaadin.flow.server.auth.AnonymousAllowed
 import org.springframework.stereotype.Component
 
 @Component
-class VaadinSecurityConfig : VaadinServiceInitListener {
+class VaadinSecurityConfig(
+    private val exceptionHandler: GlobalExceptionHandler
+) : VaadinServiceInitListener {
     
     override fun serviceInit(event: ServiceInitEvent) {
         event.source.addUIInitListener { uiEvent ->
+            // 注册全局异常处理器
+            uiEvent.ui.session.errorHandler = exceptionHandler
+            
             uiEvent.ui.addBeforeEnterListener { beforeEnterEvent ->
                 checkAccess(beforeEnterEvent)
             }

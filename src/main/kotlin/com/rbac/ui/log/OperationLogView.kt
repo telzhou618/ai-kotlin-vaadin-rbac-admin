@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.LogQueryDto
 import com.rbac.entity.SysOperationLog
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.grid.Grid
@@ -23,8 +23,7 @@ import java.io.File
 @Route("logs", layout = MainLayout::class)
 @PageTitle("操作日志")
 class OperationLogView(
-    private val logService: SysOperationLogService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val logService: SysOperationLogService
 ) : VerticalLayout() {
     
     private lateinit var usernameField: TextField
@@ -104,47 +103,39 @@ class OperationLogView(
     }
     
     private fun loadData(page: Long, size: Int) {
-        try {
-            val query = LogQueryDto(
-                username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
-                module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
-                startTime = startDatePicker.value?.atStartOfDay(),
-                endTime = endDatePicker.value?.atTime(23, 59, 59)
-            )
-            
-            val pageData = logService.pageQuery(Page(page, size.toLong()), query)
-            grid.setItems(pageData.records)
-            pagination.updatePagination(pageData.current, pageData.pages)
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
+        val query = LogQueryDto(
+            username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
+            module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
+            startTime = startDatePicker.value?.atStartOfDay(),
+            endTime = endDatePicker.value?.atTime(23, 59, 59)
+        )
+        
+        val pageData = logService.pageQuery(Page(page, size.toLong()), query)
+        grid.setItems(pageData.records)
+        pagination.updatePagination(pageData.current, pageData.pages)
     }
     
     private fun handleExport() {
-        try {
-            val logs = logService.list()
-            val data = logs.map { log ->
-                mapOf(
-                    "ID" to log.id,
-                    "用户" to log.username,
-                    "模块" to log.module,
-                    "操作" to log.operation,
-                    "状态码" to log.responseCode,
-                    "响应消息" to log.responseMsg,
-                    "IP" to log.ip,
-                    "耗时(ms)" to log.executeTime,
-                    "操作时间" to log.createTime
-                )
-            }
-            
-            val file = File("操作日志_${System.currentTimeMillis()}.xlsx")
-            ExcelUtil.getWriter(file).use { writer ->
-                writer.write(data, true)
-            }
-            
-            exceptionHandler.showSuccess("导出成功: ${file.absolutePath}")
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
+        val logs = logService.list()
+        val data = logs.map { log ->
+            mapOf(
+                "ID" to log.id,
+                "用户" to log.username,
+                "模块" to log.module,
+                "操作" to log.operation,
+                "状态码" to log.responseCode,
+                "响应消息" to log.responseMsg,
+                "IP" to log.ip,
+                "耗时(ms)" to log.executeTime,
+                "操作时间" to log.createTime
+            )
         }
+        
+        val file = File("操作日志_${System.currentTimeMillis()}.xlsx")
+        ExcelUtil.getWriter(file).use { writer ->
+            writer.write(data, true)
+        }
+        
+        NotificationUtil.showSuccess("导出成功: ${file.absolutePath}")
     }
 }

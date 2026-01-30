@@ -1,7 +1,6 @@
 package com.rbac.ui.dashboard
 
 import com.github.mvysny.karibudsl.v10.*
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
@@ -14,18 +13,16 @@ import com.vaadin.flow.router.Route
 @PageTitle("首页")
 class DashboardView(
     private val dashboardService: DashboardService,
-    private val logService: SysOperationLogService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val logService: SysOperationLogService
 ) : VerticalLayout() {
     
     init {
         setSizeFull()
         isPadding = true
         
-        try {
-            val data = dashboardService.getDashboardData()
-            
-            horizontalLayout {
+        val data = dashboardService.getDashboardData()
+        
+        horizontalLayout {
                 width = "100%"
                 
                 div {
@@ -76,9 +73,5 @@ class DashboardView(
                 setItems(logService.getRecentLogs(10))
             }
             add(grid)
-            
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
     }
 }

@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleQueryDto
 import com.rbac.entity.SysRole
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysRoleService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -21,8 +21,7 @@ import com.vaadin.flow.router.Route
 @Route("roles", layout = MainLayout::class)
 @PageTitle("角色管理")
 class RoleListView(
-    private val roleService: SysRoleService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val roleService: SysRoleService
 ) : VerticalLayout() {
     
     private lateinit var searchField: TextField
@@ -97,38 +96,30 @@ class RoleListView(
     }
     
     private fun loadData(page: Long, size: Int) {
-        try {
-            val query = RoleQueryDto(roleName = searchField.value?.trim()?.takeIf { it.isNotBlank() })
-            val pageData = roleService.pageQuery(Page(page, size.toLong()), query)
-            
-            grid.setItems(pageData.records)
-            pagination.updatePagination(pageData.current, pageData.pages)
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
+        val query = RoleQueryDto(roleName = searchField.value?.trim()?.takeIf { it.isNotBlank() })
+        val pageData = roleService.pageQuery(Page(page, size.toLong()), query)
+        
+        grid.setItems(pageData.records)
+        pagination.updatePagination(pageData.current, pageData.pages)
     }
     
     private fun showFormDialog(role: SysRole?) {
-        RoleFormDialog(role, roleService, exceptionHandler) {
+        RoleFormDialog(role, roleService) {
             loadData(1, 10)
         }.open()
     }
     
     private fun showAssignDialog(role: SysRole) {
-        RoleAssignFormDialog(role, roleService, roleService.permissionService, exceptionHandler) {
+        RoleAssignFormDialog(role, roleService, roleService.permissionService) {
             loadData(1, 10)
         }.open()
     }
     
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该角色吗？") {
-            try {
-                roleService.deleteRole(id)
-                exceptionHandler.showSuccess("删除成功")
-                loadData(1, 10)
-            } catch (e: Exception) {
-                exceptionHandler.handle(e)
-            }
+            roleService.deleteRole(id)
+            NotificationUtil.showSuccess("删除成功")
+            loadData(1, 10)
         }
     }
 }

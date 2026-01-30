@@ -2,9 +2,9 @@ package com.rbac.ui.user
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.UserDto
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.dialog.Dialog
@@ -18,7 +18,6 @@ class UserFormDialog(
     private val user: UserDto?,
     private val userService: SysUserService,
     private val roleService: SysRoleService,
-    private val exceptionHandler: GlobalExceptionHandler,
     private val onSuccess: () -> Unit
 ) : Dialog() {
     
@@ -112,23 +111,19 @@ class UserFormDialog(
     }
     
     private fun handleSave() {
-        try {
-            if (binder.validate().isOk) {
-                val dto = UserDto(id = user?.id)
-                binder.writeBean(dto)
-                
-                if (user == null) {
-                    userService.saveUser(dto)
-                } else {
-                    userService.updateUser(dto)
-                }
-                
-                exceptionHandler.showSuccess("保存成功")
-                close()
-                onSuccess()
+        if (binder.validate().isOk) {
+            val dto = UserDto(id = user?.id)
+            binder.writeBean(dto)
+            
+            if (user == null) {
+                userService.saveUser(dto)
+            } else {
+                userService.updateUser(dto)
             }
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
+            
+            NotificationUtil.showSuccess("保存成功")
+            close()
+            onSuccess()
         }
     }
 }

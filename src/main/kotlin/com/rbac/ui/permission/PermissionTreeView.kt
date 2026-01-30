@@ -2,10 +2,10 @@ package com.rbac.ui.permission
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.PermissionDto
-import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysPermissionService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -17,8 +17,7 @@ import com.vaadin.flow.router.Route
 @Route("permissions", layout = MainLayout::class)
 @PageTitle("权限管理")
 class PermissionTreeView(
-    private val permissionService: SysPermissionService,
-    private val exceptionHandler: GlobalExceptionHandler
+    private val permissionService: SysPermissionService
 ) : VerticalLayout() {
     
     private lateinit var treeGrid: TreeGrid<PermissionDto>
@@ -78,30 +77,22 @@ class PermissionTreeView(
     }
     
     private fun loadData() {
-        try {
-            val tree = permissionService.getPermissionTree()
-            treeGrid.setItems(tree) { it.children }
-            treeGrid.expandRecursively(tree, 2)
-        } catch (e: Exception) {
-            exceptionHandler.handle(e)
-        }
+        val tree = permissionService.getPermissionTree()
+        treeGrid.setItems(tree) { it.children }
+        treeGrid.expandRecursively(tree, 2)
     }
     
     private fun showFormDialog(perm: PermissionDto?, parentId: Long) {
-        PermissionFormDialog(perm, parentId, permissionService, exceptionHandler) {
+        PermissionFormDialog(perm, parentId, permissionService) {
             loadData()
         }.open()
     }
     
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该权限吗？") {
-            try {
-                permissionService.deletePerm(id)
-                exceptionHandler.showSuccess("删除成功")
-                loadData()
-            } catch (e: Exception) {
-                exceptionHandler.handle(e)
-            }
+            permissionService.deletePerm(id)
+            NotificationUtil.showSuccess("删除成功")
+            loadData()
         }
     }
 }

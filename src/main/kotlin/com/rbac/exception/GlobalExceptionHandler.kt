@@ -1,27 +1,27 @@
 package com.rbac.exception
 
-import com.vaadin.flow.component.notification.Notification
-import com.vaadin.flow.component.notification.NotificationVariant
+import com.rbac.util.NotificationUtil
+import com.vaadin.flow.server.ErrorEvent
+import com.vaadin.flow.server.ErrorHandler
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class GlobalExceptionHandler {
+class GlobalExceptionHandler : ErrorHandler {
     
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
     
+    override fun error(event: ErrorEvent) {
+        val throwable = event.throwable
+        logger.error("系统异常", throwable)
+        
+        val message = throwable.message ?: "系统异常，请联系管理员"
+        NotificationUtil.showError(message)
+    }
+    
     fun handle(e: Exception) {
         logger.error("系统异常", e)
-        showError(e.message ?: "系统异常，请联系管理员")
-    }
-    
-    fun showError(message: String) {
-        val notification = Notification.show(message, 3000, Notification.Position.TOP_CENTER)
-        notification.addThemeVariants(NotificationVariant.LUMO_ERROR)
-    }
-    
-    fun showSuccess(message: String) {
-        val notification = Notification.show(message, 2000, Notification.Position.TOP_CENTER)
-        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+        NotificationUtil.showError(e.message ?: "系统异常，请联系管理员")
     }
 }
+

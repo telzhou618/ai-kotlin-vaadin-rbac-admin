@@ -1,4 +1,4 @@
-package com.rbac.ui.dialog
+package com.rbac.ui.role
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto

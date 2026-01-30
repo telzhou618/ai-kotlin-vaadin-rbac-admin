@@ -3,7 +3,7 @@ package com.rbac.ui
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
-import com.rbac.ui.view.DashboardView
+import com.rbac.ui.dashboard.DashboardView
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent

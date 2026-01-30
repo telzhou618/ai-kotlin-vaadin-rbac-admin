@@ -1,4 +1,4 @@
-package com.rbac.ui.view
+package com.rbac.ui.dashboard
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.exception.GlobalExceptionHandler
@@ -6,7 +6,6 @@ import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route

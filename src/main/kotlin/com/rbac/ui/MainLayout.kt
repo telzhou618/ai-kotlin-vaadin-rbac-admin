@@ -5,7 +5,11 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
-import com.rbac.ui.view.*
+import com.rbac.ui.dashboard.DashboardView
+import com.rbac.ui.log.OperationLogView
+import com.rbac.ui.permission.PermissionTreeView
+import com.rbac.ui.role.RoleListView
+import com.rbac.ui.user.UserListView
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle

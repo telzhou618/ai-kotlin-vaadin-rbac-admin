@@ -15,13 +15,13 @@ class PaginationComponent(
     var currentPage = 1L
         private set
     private var totalPages = 1L
-    private var pageSize = 10
+    private var pageSize = 20  // 默认每页20条
     
     private lateinit var pageInfo: TextField
     private lateinit var pageSizeSelect: Select<Int>
     
     init {
-        setAlignItems(FlexComponent.Alignment.CENTER)
+        alignItems = FlexComponent.Alignment.CENTER
         isSpacing = true
         
         button("首页") {
@@ -52,7 +52,7 @@ class PaginationComponent(
         pageSizeSelect = select {
             width = "100px"
             setItems(10, 20, 50, 100)
-            value = pageSize
+            value = 20  // 默认选中20
             addValueChangeListener {
                 pageSize = it.value
                 goToPage(1)

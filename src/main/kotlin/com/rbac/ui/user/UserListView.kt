@@ -38,7 +38,7 @@ class UserListView(
         createGrid()
         createPagination()
         
-        loadData(1, 10)
+        loadData(1, 20)
     }
     
     private fun createToolbar() {
@@ -59,7 +59,7 @@ class UserListView(
             
             button("查询") {
                 icon = VaadinIcon.SEARCH.create()
-                onLeftClick { loadData(1, 10) }
+                onLeftClick { loadData(1, 20) }
             }
         }
     }
@@ -138,7 +138,7 @@ class UserListView(
     
     private fun showFormDialog(user: UserDto?) {
         UserFormDialog(user, userService, userService.roleService) {
-            loadData(1, 10)
+            loadData(1, 20)
         }.open()
     }
     
@@ -146,7 +146,7 @@ class UserListView(
         showConfirmDialog("确定要删除该用户吗？") {
             userService.deleteUser(id)
             NotificationUtil.showSuccess("删除成功")
-            loadData(1, 10)
+            loadData(1, 20)
         }
     }
     

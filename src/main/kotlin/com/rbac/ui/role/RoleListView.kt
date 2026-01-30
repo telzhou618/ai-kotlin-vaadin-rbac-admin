@@ -38,7 +38,7 @@ class RoleListView(
         createGrid()
         createPagination()
         
-        loadData(1, 10)
+        loadData(1, 20)
     }
     
     private fun createToolbar() {
@@ -59,7 +59,7 @@ class RoleListView(
             
             button("查询") {
                 icon = VaadinIcon.SEARCH.create()
-                onLeftClick { loadData(1, 10) }
+                onLeftClick { loadData(1, 20) }
             }
         }
     }
@@ -107,13 +107,13 @@ class RoleListView(
     
     private fun showFormDialog(role: SysRole?) {
         RoleFormDialog(role, roleService) {
-            loadData(1, 10)
+            loadData(1, 20)
         }.open()
     }
     
     private fun showAssignDialog(role: SysRole) {
         RoleAssignFormDialog(role, roleService, roleService.permissionService) {
-            loadData(1, 10)
+            loadData(1, 20)
         }.open()
     }
     
@@ -121,7 +121,7 @@ class RoleListView(
         showConfirmDialog("确定要删除该角色吗？") {
             roleService.deleteRole(id)
             NotificationUtil.showSuccess("删除成功")
-            loadData(1, 10)
+            loadData(1, 20)
         }
     }
 }

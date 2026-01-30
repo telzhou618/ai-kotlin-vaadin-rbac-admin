@@ -43,7 +43,7 @@ class OperationLogView(
         createGrid()
         createPagination()
         
-        loadData(1, 10)
+        loadData(1, 20)
     }
     
     private fun createToolbar() {
@@ -71,7 +71,7 @@ class OperationLogView(
             
             button("查询") {
                 icon = VaadinIcon.SEARCH.create()
-                onLeftClick { loadData(1, 10) }
+                onLeftClick { loadData(1, 20) }
             }
             
             button("导出") {

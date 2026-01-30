@@ -131,8 +131,14 @@ class OperationLogView(
     private fun exportToExcel() {
         runCatching {
             // 获取数据
-            val records = logService.list()
-
+            val query = LogQueryDto(
+                username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
+                module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
+                startTime = startDatePicker.value?.atStartOfDay(),
+                endTime = endDatePicker.value?.atTime(23, 59, 59)
+            )
+            val pageData = logService.pageQuery(Page(0, Long.MAX_VALUE), query)
+            val records = pageData.records
             // 验证数据
             if (records.isEmpty()) {
                 NotificationUtil.showError("没有数据可导出")

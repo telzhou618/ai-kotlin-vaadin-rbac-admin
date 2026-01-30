@@ -1,0 +1,85 @@
+package com.rbac.ui.dialog
+
+import com.github.mvysny.karibudsl.v10.*
+import com.rbac.dto.PermissionDto
+import com.rbac.entity.SysRole
+import com.rbac.exception.GlobalExceptionHandler
+import com.rbac.service.SysPermissionService
+import com.rbac.service.SysRoleService
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.checkbox.Checkbox
+import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+
+class RoleAssignFormDialog(
+    private val role: SysRole,
+    private val roleService: SysRoleService,
+    private val permissionService: SysPermissionService,
+    private val exceptionHandler: GlobalExceptionHandler,
+    private val onSuccess: () -> Unit
+) : Dialog() {
+    
+    private val selectedPermIds = mutableSetOf<Long>()
+    
+    init {
+        headerTitle = "分配权限 - ${role.roleName}"
+        width = "600px"
+        height = "600px"
+        
+        val roleDto = roleService.getRoleDto(role)
+        selectedPermIds.addAll(roleDto.permIds)
+        
+        val content = VerticalLayout().apply {
+            setSizeFull()
+            isPadding = true
+        }
+        
+        val permTree = permissionService.getPermissionTree()
+        renderPermissionTree(content, permTree, 0)
+        
+        add(content)
+        
+        val cancelButton = Button("取消")
+        cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+        cancelButton.addClickListener { close() }
+        
+        val saveButton = Button("保存")
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+        saveButton.addClickListener { handleSave() }
+        
+        footer.add(cancelButton, saveButton)
+    }
+    
+    private fun renderPermissionTree(container: VerticalLayout, perms: List<PermissionDto>, level: Int) {
+        perms.forEach { perm ->
+            val checkbox = Checkbox(perm.permName).apply {
+                value = selectedPermIds.contains(perm.id)
+                element.style.set("margin-left", "${level * 20}px")
+                addValueChangeListener { event ->
+                    if (event.value) {
+                        selectedPermIds.add(perm.id!!)
+                    } else {
+                        selectedPermIds.remove(perm.id)
+                    }
+                }
+            }
+            container.add(checkbox)
+            
+            if (perm.children.isNotEmpty()) {
+                renderPermissionTree(container, perm.children, level + 1)
+            }
+        }
+    }
+    
+    private fun handleSave() {
+        try {
+            roleService.assignPermissions(role.id!!, selectedPermIds.toList())
+            exceptionHandler.showSuccess("分配权限成功")
+            close()
+            onSuccess()
+        } catch (e: Exception) {
+            exceptionHandler.handle(e)
+        }
+    }
+}

@@ -39,6 +39,9 @@ dependencies {
     // Hutool
     implementation("cn.hutool:hutool-all:5.8.24")
     
+    // EasyExcel
+    implementation("com.alibaba:easyexcel:3.3.4")
+    
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

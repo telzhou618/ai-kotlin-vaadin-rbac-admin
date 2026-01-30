@@ -1,15 +1,16 @@
 package com.rbac.ui.log
 
-import cn.hutool.poi.excel.ExcelUtil
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.config.DateFormatConfig
 import com.rbac.dto.LogQueryDto
+import com.rbac.dto.OperationLogExportDto
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
+import com.rbac.util.ExcelExportUtil
 import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
@@ -20,7 +21,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Route("logs", layout = MainLayout::class)
 @PageTitle("操作日志")
@@ -78,7 +80,7 @@ class OperationLogView(
             button("导出") {
                 addThemeVariants(ButtonVariant.LUMO_SUCCESS)
                 icon = VaadinIcon.DOWNLOAD.create()
-                onLeftClick { handleExport() }
+                onLeftClick { exportToExcel() }
             }
         }
     }
@@ -122,27 +124,42 @@ class OperationLogView(
         pagination.updatePagination(pageData.current, pageData.pages)
     }
 
-    private fun handleExport() {
-        val logs = logService.list()
-        val data = logs.map { log ->
-            mapOf(
-                "ID" to log.id,
-                "用户" to log.username,
-                "模块" to log.module,
-                "操作" to log.operation,
-                "状态码" to log.responseCode,
-                "响应消息" to log.responseMsg,
-                "IP" to log.ip,
-                "耗时(ms)" to log.executeTime,
-                "操作时间" to log.createTime
-            )
-        }
 
-        val file = File("操作日志_${System.currentTimeMillis()}.xlsx")
-        ExcelUtil.getWriter(file).use { writer ->
-            writer.write(data, true)
-        }
+    /**
+     * 导出 Excel
+     */
+    private fun exportToExcel() {
+        runCatching {
+            // 获取数据
+            val records = logService.list()
 
-        NotificationUtil.showSuccess("导出成功: ${file.absolutePath}")
+            // 验证数据
+            if (records.isEmpty()) {
+                NotificationUtil.showError("没有数据可导出")
+                return
+            }
+            // 转换并导出
+            val exportData = records.map { log ->
+                OperationLogExportDto(
+                    id = log.id,
+                    username = log.username,
+                    module = log.module,
+                    operation = log.operation,
+                    responseCode = log.responseCode,
+                    responseMsg = log.responseMsg,
+                    ip = log.ip,
+                    executeTime = log.executeTime,
+                    createTime = DateFormatConfig.formatDateTime(log.createTime)
+                )
+            }
+            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
+            val fileName = "操作日志_${timestamp}.xlsx"
+
+            ExcelExportUtil.exportExcel(fileName, OperationLogExportDto::class.java, exportData)
+            NotificationUtil.showSuccess("导出成功，共 ${records.size} 条记录")
+
+        }.onFailure { e ->
+            NotificationUtil.showError("导出失败：${e.message}")
+        }
     }
 }

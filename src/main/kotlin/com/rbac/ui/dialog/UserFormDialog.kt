@@ -11,6 +11,8 @@ import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.validator.StringLengthValidator
 
 class UserFormDialog(
     private val user: UserDto?,
@@ -25,16 +27,18 @@ class UserFormDialog(
     private lateinit var statusSelect: Select<Int>
     private lateinit var roleCheckbox: CheckboxGroup<Long>
     
+    private val binder = Binder(UserDto::class.java)
+    
     init {
         headerTitle = if (user == null) "新增用户" else "编辑用户"
         width = "500px"
         
         val roles = roleService.list()
+        val dto = user ?: UserDto(status = 1, roleIds = emptyList())
         
         verticalLayout {
             usernameField = textField("用户名") {
                 width = "100%"
-                value = user?.username ?: ""
             }
             
             passwordField = passwordField("密码") {
@@ -46,7 +50,6 @@ class UserFormDialog(
                 width = "100%"
                 setItems(1, 0)
                 setItemLabelGenerator { if (it == 1) "启用" else "禁用" }
-                value = user?.status ?: 1
             }
             
             val roleCheckboxGroup = CheckboxGroup<Long>()
@@ -56,10 +59,45 @@ class UserFormDialog(
             roleCheckboxGroup.setItemLabelGenerator { roleId ->
                 roles.find { it.id == roleId }?.roleName ?: ""
             }
-            roleCheckboxGroup.value = user?.roleIds?.toSet() ?: emptySet()
             roleCheckbox = roleCheckboxGroup
             add(roleCheckboxGroup)
         }
+        
+        // 配置 Binder 验证规则
+        binder.forField(usernameField)
+            .asRequired("用户名不能为空")
+            .withValidator(StringLengthValidator("用户名长度必须在2-20个字符之间", 2, 20))
+            .bind(UserDto::username.name)
+        
+        binder.forField(passwordField)
+            .withValidator({ value ->
+                if (user == null) {
+                    !value.isNullOrBlank()
+                } else {
+                    true
+                }
+            }, "新增用户时密码不能为空")
+            .withValidator({ value ->
+                if (!value.isNullOrBlank()) {
+                    value.length >= 6
+                } else {
+                    true
+                }
+            }, "密码长度至少6个字符")
+            .bind(UserDto::password.name)
+        
+        binder.forField(statusSelect)
+            .asRequired("请选择状态")
+            .bind(UserDto::status.name)
+        
+        binder.forField(roleCheckbox)
+            .withConverter(
+                { it?.toList() ?: emptyList() },
+                { it?.toSet() ?: emptySet() }
+            )
+            .bind(UserDto::roleIds.name)
+        
+        binder.readBean(dto)
         
         footer.add(
             button("取消") {
@@ -75,33 +113,20 @@ class UserFormDialog(
     
     private fun handleSave() {
         try {
-            val dto = UserDto(
-                id = user?.id,
-                username = usernameField.value.trim(),
-                password = passwordField.value.trim().takeIf { it.isNotBlank() },
-                status = statusSelect.value,
-                roleIds = roleCheckbox.value.toList()
-            )
-            
-            if (dto.username.isBlank()) {
-                exceptionHandler.showError("用户名不能为空")
-                return
+            if (binder.validate().isOk) {
+                val dto = UserDto(id = user?.id)
+                binder.writeBean(dto)
+                
+                if (user == null) {
+                    userService.saveUser(dto)
+                } else {
+                    userService.updateUser(dto)
+                }
+                
+                exceptionHandler.showSuccess("保存成功")
+                close()
+                onSuccess()
             }
-            
-            if (user == null && dto.password.isNullOrBlank()) {
-                exceptionHandler.showError("密码不能为空")
-                return
-            }
-            
-            if (user == null) {
-                userService.saveUser(dto)
-            } else {
-                userService.updateUser(dto)
-            }
-            
-            exceptionHandler.showSuccess("保存成功")
-            close()
-            onSuccess()
         } catch (e: Exception) {
             exceptionHandler.handle(e)
         }

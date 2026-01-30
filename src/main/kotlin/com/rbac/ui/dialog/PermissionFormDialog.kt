@@ -7,6 +7,8 @@ import com.rbac.service.SysPermissionService
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.validator.StringLengthValidator
 
 class PermissionFormDialog(
     private val perm: PermissionDto?,
@@ -19,21 +21,36 @@ class PermissionFormDialog(
     private lateinit var permCodeField: TextField
     private lateinit var permNameField: TextField
     
+    private val binder = Binder(PermissionDto::class.java)
+    
     init {
         headerTitle = if (perm == null) "新增权限" else "编辑权限"
         width = "500px"
         
+        val dto = perm ?: PermissionDto(parentId = parentId)
+        
         verticalLayout {
             permCodeField = textField("权限编码") {
                 width = "100%"
-                value = perm?.permCode ?: ""
             }
             
             permNameField = textField("权限名称") {
                 width = "100%"
-                value = perm?.permName ?: ""
             }
         }
+        
+        // 配置 Binder 验证规则
+        binder.forField(permCodeField)
+            .asRequired("权限编码不能为空")
+            .withValidator(StringLengthValidator("权限编码长度必须在2-50个字符之间", 2, 50))
+            .bind(PermissionDto::permCode.name)
+        
+        binder.forField(permNameField)
+            .asRequired("权限名称不能为空")
+            .withValidator(StringLengthValidator("权限名称长度必须在2-50个字符之间", 2, 50))
+            .bind(PermissionDto::permName.name)
+        
+        binder.readBean(dto)
         
         footer.add(
             button("取消") {
@@ -49,27 +66,20 @@ class PermissionFormDialog(
     
     private fun handleSave() {
         try {
-            val dto = PermissionDto(
-                id = perm?.id,
-                permCode = permCodeField.value.trim(),
-                permName = permNameField.value.trim(),
-                parentId = parentId
-            )
-            
-            if (dto.permCode.isBlank() || dto.permName.isBlank()) {
-                exceptionHandler.showError("权限编码和名称不能为空")
-                return
+            if (binder.validate().isOk) {
+                val dto = PermissionDto(id = perm?.id, parentId = parentId)
+                binder.writeBean(dto)
+                
+                if (perm == null) {
+                    permissionService.savePerm(dto)
+                } else {
+                    permissionService.updatePerm(dto)
+                }
+                
+                exceptionHandler.showSuccess("保存成功")
+                close()
+                onSuccess()
             }
-            
-            if (perm == null) {
-                permissionService.savePerm(dto)
-            } else {
-                permissionService.updatePerm(dto)
-            }
-            
-            exceptionHandler.showSuccess("保存成功")
-            close()
-            onSuccess()
         } catch (e: Exception) {
             exceptionHandler.handle(e)
         }

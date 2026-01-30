@@ -27,12 +27,8 @@ class MainLayout(
 ) : AppLayout() {
     
     init {
-        if (!StpUtil.isLogin()) {
-            UI.getCurrent().navigate(LoginView::class.java)
-        } else {
-            createHeader()
-            createDrawer()
-        }
+        createHeader()
+        createDrawer()
     }
     
     private fun createHeader() {

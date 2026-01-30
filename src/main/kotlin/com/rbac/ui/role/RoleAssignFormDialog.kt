@@ -9,7 +9,10 @@ import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
 
 class RoleAssignFormDialog(
     private val role: SysRole,
@@ -21,25 +24,45 @@ class RoleAssignFormDialog(
     private val selectedPermIds = mutableSetOf<Long>()
     private val checkboxMap = mutableMapOf<Long, Checkbox>()
     private val permissionMap = mutableMapOf<Long, PermissionDto>()
+    private val allPermissions = mutableListOf<PermissionDto>()
+    
+    private lateinit var searchField: TextField
+    private lateinit var contentLayout: VerticalLayout
+    private var permTree: List<PermissionDto> = emptyList()
     
     init {
         headerTitle = "分配权限 - ${role.roleName}"
-        width = "600px"
-        height = "600px"
+        width = "700px"
+        height = "700px"
         
         val roleDto = roleService.getRoleDto(role)
         selectedPermIds.addAll(roleDto.permIds)
         
-        val content = VerticalLayout().apply {
+        permTree = permissionService.getPermissionTree()
+        buildPermissionMap(permTree)
+        collectAllPermissions(permTree)
+        
+        // 创建主布局
+        val mainLayout = VerticalLayout().apply {
             setSizeFull()
-            isPadding = true
+            isPadding = false
+            isSpacing = false
         }
         
-        val permTree = permissionService.getPermissionTree()
-        buildPermissionMap(permTree)
-        renderPermissionTree(content, permTree, 0)
+        // 创建工具栏
+        mainLayout.add(createToolbar())
         
-        add(content)
+        // 创建内容区域
+        contentLayout = VerticalLayout().apply {
+            setSizeFull()
+            isPadding = true
+            element.style.set("overflow-y", "auto")
+        }
+        
+        renderPermissionTree(contentLayout, permTree, 0)
+        mainLayout.add(contentLayout)
+        
+        add(mainLayout)
         
         footer.add(
             button("取消") {
@@ -51,6 +74,94 @@ class RoleAssignFormDialog(
                 onLeftClick { handleSave() }
             }
         )
+    }
+    
+    /**
+     * 创建工具栏
+     */
+    private fun createToolbar(): HorizontalLayout {
+        return horizontalLayout {
+            width = "100%"
+            isPadding = true
+            isSpacing = true
+            element.style.set("border-bottom", "1px solid #e0e0e0")
+            
+            // 搜索框
+            searchField = textField {
+                placeholder = "搜索权限名称或编码"
+                width = "100%"
+                isClearButtonVisible = true
+                prefixComponent = VaadinIcon.SEARCH.create()
+                
+                addValueChangeListener {
+                    filterPermissions(it.value)
+                }
+            }
+        }
+    }
+    
+    /**
+     * 搜索过滤权限
+     */
+    private fun filterPermissions(keyword: String?) {
+        contentLayout.removeAll()
+        checkboxMap.clear()
+        
+        if (keyword.isNullOrBlank()) {
+            // 无搜索关键词，显示完整树
+            renderPermissionTree(contentLayout, permTree, 0)
+        } else {
+            // 有搜索关键词，只显示匹配的权限
+            val filteredPerms = allPermissions.filter { perm ->
+                perm.permName.contains(keyword, ignoreCase = true) ||
+                perm.permCode.contains(keyword, ignoreCase = true)
+            }
+            
+            if (filteredPerms.isEmpty()) {
+                contentLayout.add(span("未找到匹配的权限") {
+                    element.style.set("color", "#999")
+                    element.style.set("padding", "20px")
+                })
+            } else {
+                renderFilteredPermissions(contentLayout, filteredPerms)
+            }
+        }
+    }
+    
+    /**
+     * 渲染过滤后的权限列表（扁平化显示）
+     */
+    private fun renderFilteredPermissions(container: VerticalLayout, perms: List<PermissionDto>) {
+        perms.forEach { perm ->
+            val checkbox = Checkbox("${perm.permName} (${perm.permCode})").apply {
+                value = selectedPermIds.contains(perm.id)
+                
+                addValueChangeListener { event ->
+                    if (event.isFromClient) {
+                        if (event.value) {
+                            selectedPermIds.add(perm.id!!)
+                        } else {
+                            selectedPermIds.remove(perm.id)
+                        }
+                    }
+                }
+            }
+            
+            checkboxMap[perm.id!!] = checkbox
+            container.add(checkbox)
+        }
+    }
+    
+    /**
+     * 收集所有权限（扁平化）
+     */
+    private fun collectAllPermissions(perms: List<PermissionDto>) {
+        perms.forEach { perm ->
+            allPermissions.add(perm)
+            if (perm.children.isNotEmpty()) {
+                collectAllPermissions(perm.children)
+            }
+        }
     }
     
     /**

@@ -8,8 +8,10 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.router.RouteAlias
 
-@Route("dashboard", layout = MainLayout::class)
+@Route("", layout = MainLayout::class)
+@RouteAlias("dashboard", layout = MainLayout::class)
 @PageTitle("首页")
 class DashboardView(
     private val dashboardService: DashboardService,

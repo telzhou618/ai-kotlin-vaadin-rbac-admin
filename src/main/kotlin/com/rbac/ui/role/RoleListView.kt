@@ -2,6 +2,7 @@ package com.rbac.ui.role
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.RoleQueryDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
@@ -20,6 +21,7 @@ import com.vaadin.flow.router.Route
 
 @Route("roles", layout = MainLayout::class)
 @PageTitle("角色管理")
+@RequiresPermissions("system:role:view")  // 需要角色查看权限
 class RoleListView(
     private val roleService: SysRoleService
 ) : VerticalLayout() {

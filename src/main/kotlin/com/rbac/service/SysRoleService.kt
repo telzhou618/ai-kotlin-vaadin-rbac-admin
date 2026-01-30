@@ -68,4 +68,11 @@ class SysRoleService(
     fun assignPermissions(roleId: Long, permIds: List<Long>) {
         rolePermissionService.saveRolePermissions(roleId, permIds)
     }
+    
+    /**
+     * 获取角色的所有权限ID列表
+     */
+    fun getPermissionIdsByRoleId(roleId: Long): List<Long> {
+        return rolePermissionService.getPermIdsByRoleId(roleId)
+    }
 }

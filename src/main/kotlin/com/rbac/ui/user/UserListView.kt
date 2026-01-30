@@ -2,6 +2,7 @@ package com.rbac.ui.user
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.UserDto
 import com.rbac.dto.UserQueryDto
 import com.rbac.service.SysUserService
@@ -20,6 +21,7 @@ import com.vaadin.flow.router.Route
 
 @Route("users", layout = MainLayout::class)
 @PageTitle("用户管理")
+@RequiresPermissions("system:user:view")  // 需要用户查看权限
 class UserListView(
     private val userService: SysUserService
 ) : VerticalLayout() {

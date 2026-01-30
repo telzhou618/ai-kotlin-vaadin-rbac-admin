@@ -1,6 +1,7 @@
 package com.rbac.ui.permission
 
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
 import com.rbac.ui.MainLayout
@@ -16,6 +17,7 @@ import com.vaadin.flow.router.Route
 
 @Route("permissions", layout = MainLayout::class)
 @PageTitle("权限管理")
+@RequiresPermissions("system:permission:view")  // 需要权限查看权限
 class PermissionTreeView(
     private val permissionService: SysPermissionService
 ) : VerticalLayout() {

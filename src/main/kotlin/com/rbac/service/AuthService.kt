@@ -19,7 +19,18 @@ class AuthService(
         if (user.password != DigestUtil.md5Hex(password)) {
             return false
         }
+        
+        // 登录并缓存用户信息
         StpUtil.login(user.id)
+        
+        // 获取并缓存用户的角色和权限
+        val roles = userService.getUserRoles(user.id!!)
+        val permissions = userService.getUserPermissions(user.id!!)
+        
+        // 存储到 Session 中（Sa-Token 会自动管理）
+        StpUtil.getSession().set("roles", roles)
+        StpUtil.getSession().set("permissions", permissions)
+        
         return true
     }
     

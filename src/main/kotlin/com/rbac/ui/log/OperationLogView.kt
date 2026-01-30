@@ -3,6 +3,7 @@ package com.rbac.ui.log
 import cn.hutool.poi.excel.ExcelUtil
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.LogQueryDto
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
@@ -22,6 +23,7 @@ import java.io.File
 
 @Route("logs", layout = MainLayout::class)
 @PageTitle("操作日志")
+@RequiresPermissions("system:log:view")  // 需要日志查看权限
 class OperationLogView(
     private val logService: SysOperationLogService
 ) : VerticalLayout() {

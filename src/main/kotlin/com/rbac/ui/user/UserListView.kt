@@ -44,7 +44,13 @@ class UserListView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
-            setAlignItems(FlexComponent.Alignment.END)
+            alignItems = FlexComponent.Alignment.END
+
+            button("新增") {
+                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.PLUS.create()
+                onLeftClick { showFormDialog(null) }
+            }
             
             searchField = textField("搜索") {
                 placeholder = "输入用户名搜索"
@@ -55,12 +61,6 @@ class UserListView(
                 icon = VaadinIcon.SEARCH.create()
                 onLeftClick { loadData(1, 10) }
             }
-            
-            button("新增") {
-                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                icon = VaadinIcon.PLUS.create()
-                onLeftClick { showFormDialog(null) }
-            }
         }
     }
     
@@ -69,19 +69,53 @@ class UserListView(
             addColumn { it.id }.setHeader("ID").width = "80px"
             addColumn { it.username }.setHeader("用户名")
             addColumn { it.roleNames }.setHeader("角色")
-            addColumn { user -> if (user.status == 1) "启用" else "禁用" }.setHeader("状态")
+            
+            // 状态列 - 带颜色高亮
+            addComponentColumn { user ->
+                val statusText = if (user.status == 1) "启用" else "禁用"
+                val badge = span(statusText) {
+                    element.themeList.add(if (user.status == 1) "badge success" else "badge error")
+                    element.style.set("padding", "4px 8px")
+                    element.style.set("border-radius", "4px")
+                    element.style.set("font-size", "12px")
+                    element.style.set("font-weight", "500")
+                    if (user.status == 1) {
+                        element.style.set("background-color", "#e7f5e9")
+                        element.style.set("color", "#2e7d32")
+                    } else {
+                        element.style.set("background-color", "#fdecea")
+                        element.style.set("color", "#d32f2f")
+                    }
+                }
+                badge
+            }.setHeader("状态").width = "100px"
+            
             addComponentColumn { user ->
                 horizontalLayout {
                     button("编辑") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL)
                         onLeftClick { showFormDialog(user) }
                     }
+                    
+                    // 启用/禁用按钮
+                    if (user.status == 1) {
+                        button("禁用") {
+                            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_CONTRAST)
+                            onLeftClick { handleToggleStatus(user.id!!, 0) }
+                        }
+                    } else {
+                        button("启用") {
+                            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_SUCCESS)
+                            onLeftClick { handleToggleStatus(user.id!!, 1) }
+                        }
+                    }
+                    
                     button("删除") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR)
                         onLeftClick { handleDelete(user.id!!) }
                     }
                 }
-            }.setHeader("操作")
+            }.setHeader("操作").width = "280px"
             
             setSizeFull()
         }
@@ -113,6 +147,15 @@ class UserListView(
             userService.deleteUser(id)
             NotificationUtil.showSuccess("删除成功")
             loadData(1, 10)
+        }
+    }
+    
+    private fun handleToggleStatus(id: Long, newStatus: Int) {
+        val action = if (newStatus == 1) "启用" else "禁用"
+        showConfirmDialog("确定要${action}该用户吗？") {
+            userService.toggleUserStatus(id, newStatus)
+            NotificationUtil.showSuccess("${action}成功")
+            loadData(pagination.currentPage, 10)
         }
     }
 }

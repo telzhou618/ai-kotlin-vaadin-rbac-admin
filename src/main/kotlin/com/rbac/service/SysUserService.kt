@@ -102,4 +102,15 @@ class SysUserService(
 
         return permissions.toList()
     }
+    
+    /**
+     * 切换用户状态（启用/禁用）
+     */
+    @OperationLog(module = "用户管理", operation = "切换状态")
+    @Transactional
+    fun toggleUserStatus(id: Long, newStatus: Int) {
+        val user = getById(id) ?: throw RuntimeException("用户不存在")
+        user.status = newStatus
+        updateById(user)
+    }
 }

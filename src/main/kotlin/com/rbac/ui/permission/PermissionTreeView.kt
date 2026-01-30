@@ -37,7 +37,7 @@ class PermissionTreeView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
-            setAlignItems(FlexComponent.Alignment.END)
+            alignItems = FlexComponent.Alignment.END
             
             button("新增根权限") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)

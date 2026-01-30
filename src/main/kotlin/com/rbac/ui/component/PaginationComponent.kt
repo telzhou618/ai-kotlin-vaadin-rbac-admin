@@ -12,7 +12,8 @@ class PaginationComponent(
     private val onPageChange: (page: Long, size: Int) -> Unit
 ) : HorizontalLayout() {
     
-    private var currentPage = 1L
+    var currentPage = 1L
+        private set
     private var totalPages = 1L
     private var pageSize = 10
     

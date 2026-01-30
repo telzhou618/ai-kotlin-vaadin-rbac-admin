@@ -44,7 +44,13 @@ class RoleListView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
-            setAlignItems(FlexComponent.Alignment.END)
+            alignItems = FlexComponent.Alignment.END
+
+            button("新增") {
+                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.PLUS.create()
+                onLeftClick { showFormDialog(null) }
+            }
             
             searchField = textField("搜索") {
                 placeholder = "输入角色名称搜索"
@@ -54,12 +60,6 @@ class RoleListView(
             button("查询") {
                 icon = VaadinIcon.SEARCH.create()
                 onLeftClick { loadData(1, 10) }
-            }
-            
-            button("新增") {
-                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                icon = VaadinIcon.PLUS.create()
-                onLeftClick { showFormDialog(null) }
             }
         }
     }

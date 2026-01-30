@@ -49,7 +49,7 @@ class OperationLogView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
-            setAlignItems(FlexComponent.Alignment.CENTER)
+            setAlignItems(FlexComponent.Alignment.END)
             
             usernameField = textField("用户名") {
                 placeholder = "输入用户名"

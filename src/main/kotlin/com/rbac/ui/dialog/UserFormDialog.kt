@@ -5,7 +5,6 @@ import com.rbac.dto.UserDto
 import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.dialog.Dialog
@@ -62,15 +61,16 @@ class UserFormDialog(
             add(roleCheckboxGroup)
         }
         
-        val cancelButton = Button("取消")
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-        cancelButton.addClickListener { close() }
-        
-        val saveButton = Button("保存")
-        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-        saveButton.addClickListener { handleSave() }
-        
-        footer.add(cancelButton, saveButton)
+        footer.add(
+            button("取消") {
+                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                onLeftClick { close() }
+            },
+            button("保存") {
+                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                onLeftClick { handleSave() }
+            }
+        )
     }
     
     private fun handleSave() {

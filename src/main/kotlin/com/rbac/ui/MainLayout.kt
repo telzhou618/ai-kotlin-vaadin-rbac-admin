@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.exception.GlobalExceptionHandler
 import com.rbac.service.AuthService
+import com.rbac.service.SysUserService
 import com.rbac.ui.view.*
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
@@ -21,6 +22,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility
 @Route("")
 class MainLayout(
     private val authService: AuthService,
+    private val userService: SysUserService,
     private val exceptionHandler: GlobalExceptionHandler
 ) : AppLayout() {
     
@@ -34,10 +36,14 @@ class MainLayout(
     }
     
     private fun createHeader() {
+        val userId = StpUtil.getLoginIdAsLong()
+        val user = userService.getById(userId)
+        val username = user?.username ?: "未知用户"
+        
         val header = HorizontalLayout().apply {
             width = "100%"
             isPadding = true
-            alignItems = FlexComponent.Alignment.CENTER
+            setAlignItems(FlexComponent.Alignment.CENTER)
             
             add(DrawerToggle())
             
@@ -45,12 +51,11 @@ class MainLayout(
                 addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
             })
             
-            val spacer = Span().apply { 
-                element.style.set("flex-grow", "1") 
-            }
-            add(spacer)
+            add(Span().apply {
+                element.style.set("flex-grow", "1")
+            })
             
-            add(Span("用户: ${StpUtil.getLoginIdAsString()}"))
+            add(Span("欢迎你, $username"))
             
             button("退出") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
@@ -59,7 +64,7 @@ class MainLayout(
             }
         }
         
-        addToNavbar(header)
+        addToNavbar(true, header)
     }
     
     private fun createDrawer() {

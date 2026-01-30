@@ -45,7 +45,7 @@ class UserListView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
-            setAlignItems(FlexComponent.Alignment.CENTER)
+            setAlignItems(FlexComponent.Alignment.END)
             
             searchField = textField("搜索") {
                 placeholder = "输入用户名搜索"

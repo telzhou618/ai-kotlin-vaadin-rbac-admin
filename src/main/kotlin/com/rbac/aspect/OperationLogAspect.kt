@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil
 import com.rbac.annotation.OperationLog
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
+import com.rbac.service.SysUserService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -16,7 +17,8 @@ import java.time.LocalDateTime
 @Aspect
 @Component
 class OperationLogAspect(
-    private val operationLogService: SysOperationLogService
+    private val operationLogService: SysOperationLogService,
+    private val userService: SysUserService
 ) {
     
     private val logger = LoggerFactory.getLogger(OperationLogAspect::class.java)
@@ -39,10 +41,15 @@ class OperationLogAspect(
             createTime = LocalDateTime.now()
         }
         
+        // 获取当前登录用户信息
         try {
             if (StpUtil.isLogin()) {
-                log.userId = StpUtil.getLoginIdAsLong()
-                log.username = StpUtil.getLoginIdAsString()
+                val userId = StpUtil.getLoginIdAsLong()
+                log.userId = userId
+                
+                // 从数据库获取真实用户名
+                val user = userService.getById(userId)
+                log.username = user?.username ?: "未知用户"
             }
         } catch (e: Exception) {
             logger.warn("获取登录信息失败", e)

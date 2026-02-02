@@ -27,7 +27,7 @@ class PermissionTreeView(
     init {
         setSizeFull()
         isPadding = true
-        
+        h2("权限管理")
         createToolbar()
         createTreeGrid()
         

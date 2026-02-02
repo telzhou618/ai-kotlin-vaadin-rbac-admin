@@ -33,7 +33,7 @@ class UserListView(
     init {
         setSizeFull()
         isPadding = true
-        
+        h2("用户管理")
         createToolbar()
         createGrid()
         createPagination()

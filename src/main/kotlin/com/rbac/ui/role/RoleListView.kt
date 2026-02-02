@@ -33,7 +33,7 @@ class RoleListView(
     init {
         setSizeFull()
         isPadding = true
-        
+        h2("角色管理")
         createToolbar()
         createGrid()
         createPagination()

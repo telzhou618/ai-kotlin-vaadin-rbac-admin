@@ -25,45 +25,50 @@ import com.vaadin.flow.router.Route
 class RoleListView(
     private val roleService: SysRoleService
 ) : VerticalLayout() {
-    
+
     private lateinit var searchField: TextField
     private lateinit var grid: Grid<SysRole>
     private lateinit var pagination: PaginationComponent
-    
+
     init {
         setSizeFull()
         isPadding = true
-        h2("角色管理")
+        h3("角色管理")
         createToolbar()
         createGrid()
         createPagination()
-        
+
         loadData(1, 20)
     }
-    
+
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
+            justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
 
+            horizontalLayout {
+                alignItems = FlexComponent.Alignment.END
+
+                searchField = textField("搜索") {
+                    placeholder = "输入角色名称搜索"
+                    width = "300px"
+                }
+
+                button("查询") {
+                    icon = VaadinIcon.SEARCH.create()
+                    onLeftClick { loadData(1, 20) }
+                }
+
+            }
             button("新增") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.PLUS.create()
                 onLeftClick { showFormDialog(null) }
             }
-            
-            searchField = textField("搜索") {
-                placeholder = "输入角色名称搜索"
-                width = "300px"
-            }
-            
-            button("查询") {
-                icon = VaadinIcon.SEARCH.create()
-                onLeftClick { loadData(1, 20) }
-            }
         }
     }
-    
+
     private fun createGrid() {
         grid = Grid(SysRole::class.java, false).apply {
             addColumn { it.id }.setHeader("ID").width = "80px"
@@ -86,37 +91,37 @@ class RoleListView(
                     }
                 }
             }.setHeader("操作")
-            
+
             setSizeFull()
         }
         add(grid)
     }
-    
+
     private fun createPagination() {
         pagination = PaginationComponent { page, size -> loadData(page, size) }
         add(pagination)
     }
-    
+
     private fun loadData(page: Long, size: Int) {
         val query = RoleQueryDto(roleName = searchField.value?.trim()?.takeIf { it.isNotBlank() })
         val pageData = roleService.pageQuery(Page(page, size.toLong()), query)
-        
+
         grid.setItems(pageData.records)
         pagination.updatePagination(pageData.current, pageData.pages)
     }
-    
+
     private fun showFormDialog(role: SysRole?) {
         RoleFormDialog(role, roleService) {
             loadData(1, 20)
         }.open()
     }
-    
+
     private fun showAssignDialog(role: SysRole) {
         RoleAssignFormDialog(role, roleService, roleService.permissionService) {
             loadData(1, 20)
         }.open()
     }
-    
+
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该角色吗？") {
             roleService.deleteRole(id)

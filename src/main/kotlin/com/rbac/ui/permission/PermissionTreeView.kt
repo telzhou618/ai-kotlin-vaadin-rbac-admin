@@ -21,37 +21,40 @@ import com.vaadin.flow.router.Route
 class PermissionTreeView(
     private val permissionService: SysPermissionService
 ) : VerticalLayout() {
-    
+
     private lateinit var treeGrid: TreeGrid<PermissionDto>
-    
+
     init {
         setSizeFull()
         isPadding = true
-        h2("权限管理")
+        h3("权限管理")
         createToolbar()
         createTreeGrid()
-        
+
         loadData()
     }
-    
+
     private fun createToolbar() {
         horizontalLayout {
-            width = "100%"
+            setWidthFull()
+            justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
-            
+
+            horizontalLayout {
+                alignItems = FlexComponent.Alignment.END
+                button("刷新") {
+                    icon = VaadinIcon.REFRESH.create()
+                    onLeftClick { loadData() }
+                }
+            }
             button("新增根权限") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.PLUS.create()
                 onLeftClick { showFormDialog(null, 0) }
             }
-            
-            button("刷新") {
-                icon = VaadinIcon.REFRESH.create()
-                onLeftClick { loadData() }
-            }
         }
     }
-    
+
     private fun createTreeGrid() {
         treeGrid = TreeGrid<PermissionDto>().apply {
             addHierarchyColumn { it.permName }.setHeader("权限名称")
@@ -72,24 +75,24 @@ class PermissionTreeView(
                     }
                 }
             }.setHeader("操作")
-            
+
             setSizeFull()
         }
         add(treeGrid)
     }
-    
+
     private fun loadData() {
         val tree = permissionService.getPermissionTree()
         treeGrid.setItems(tree) { it.children }
         treeGrid.expandRecursively(tree, 2)
     }
-    
+
     private fun showFormDialog(perm: PermissionDto?, parentId: Long) {
         PermissionFormDialog(perm, parentId, permissionService) {
             loadData()
         }.open()
     }
-    
+
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该权限吗？") {
             permissionService.deletePerm(id)

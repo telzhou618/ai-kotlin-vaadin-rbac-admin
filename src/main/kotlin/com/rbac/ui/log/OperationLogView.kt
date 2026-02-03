@@ -41,7 +41,7 @@ class OperationLogView(
     init {
         setSizeFull()
         isPadding = true
-        h2("日志管理")
+        h3("日志管理")
         createToolbar()
         createGrid()
         createPagination()
@@ -50,31 +50,38 @@ class OperationLogView(
     }
 
     private fun createToolbar() {
+
         horizontalLayout {
-            width = "100%"
+            setWidthFull()
+            justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
 
-            usernameField = textField("用户名") {
-                placeholder = "输入用户名"
-                width = "150px"
-            }
+            horizontalLayout {
+                width = "100%"
+                alignItems = FlexComponent.Alignment.END
 
-            moduleField = textField("模块") {
-                placeholder = "输入模块"
-                width = "150px"
-            }
+                usernameField = textField("用户名") {
+                    placeholder = "输入用户名"
+                    width = "150px"
+                }
 
-            startDatePicker = datePicker("开始日期") {
-                width = "150px"
-            }
+                moduleField = textField("模块") {
+                    placeholder = "输入模块"
+                    width = "150px"
+                }
 
-            endDatePicker = datePicker("结束日期") {
-                width = "150px"
-            }
+                startDatePicker = datePicker("开始日期") {
+                    width = "150px"
+                }
 
-            button("查询") {
-                icon = VaadinIcon.SEARCH.create()
-                onLeftClick { loadData(1, 20) }
+                endDatePicker = datePicker("结束日期") {
+                    width = "150px"
+                }
+
+                button("查询") {
+                    icon = VaadinIcon.SEARCH.create()
+                    onLeftClick { loadData(1, 20) }
+                }
             }
 
             button("导出") {

@@ -40,7 +40,7 @@ class MainLayout(
         val header = HorizontalLayout().apply {
             width = "100%"
             isPadding = true
-            setAlignItems(FlexComponent.Alignment.CENTER)
+            alignItems = FlexComponent.Alignment.CENTER
             
             add(DrawerToggle())
             

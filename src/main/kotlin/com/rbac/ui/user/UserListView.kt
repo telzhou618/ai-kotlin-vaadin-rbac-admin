@@ -43,7 +43,7 @@ class UserListView(
 
     private fun createToolbar() {
         horizontalLayout {
-            setWidthFull()
+            width = "100%"
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
 

@@ -35,7 +35,7 @@ sa-token:
 
 # Vaadin
 vaadin:
-  launch-browser: false
+  launch-browser: true
   pnpm:
     enable: true
 

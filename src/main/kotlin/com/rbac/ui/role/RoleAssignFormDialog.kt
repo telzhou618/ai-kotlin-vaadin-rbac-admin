@@ -5,7 +5,7 @@ import com.rbac.dto.PermissionDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysPermissionService
 import com.rbac.service.SysRoleService
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.dialog.Dialog
@@ -297,7 +297,7 @@ class RoleAssignFormDialog(
     
     private fun handleSave() {
         roleService.assignPermissions(role.id!!, selectedPermIds.toList())
-        NotificationUtil.showSuccess("分配权限成功")
+        NotifyUtil.showSuccess("分配权限成功")
         close()
         onSuccess()
     }

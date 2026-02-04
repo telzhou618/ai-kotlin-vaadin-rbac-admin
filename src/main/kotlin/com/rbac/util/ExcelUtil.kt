@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream
 /**
  * Excel 导出工具类（使用 EasyExcel）
  */
-object ExcelExportUtil {
+object ExcelUtil {
     
     /**
      * 导出 Excel 文件

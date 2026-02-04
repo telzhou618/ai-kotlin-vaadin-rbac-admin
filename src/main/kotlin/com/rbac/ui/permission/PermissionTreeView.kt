@@ -9,7 +9,7 @@ import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.showConfirmDialog
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -99,7 +99,7 @@ class PermissionTreeView(
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该权限吗？") {
             permissionService.deletePerm(id)
-            NotificationUtil.showSuccess("删除成功")
+            NotifyUtil.showSuccess("删除成功")
             loadData()
         }
     }

@@ -9,7 +9,7 @@ import com.rbac.service.SysUserService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.showConfirmDialog
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -147,7 +147,7 @@ class UserListView(
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该用户吗？") {
             userService.deleteUser(id)
-            NotificationUtil.showSuccess("删除成功")
+            NotifyUtil.showSuccess("删除成功")
             loadData(1, 20)
         }
     }
@@ -156,7 +156,7 @@ class UserListView(
         val action = if (newStatus == 1) "启用" else "禁用"
         showConfirmDialog("确定要${action}该用户吗？") {
             userService.toggleUserStatus(id, newStatus)
-            NotificationUtil.showSuccess("${action}成功")
+            NotifyUtil.showSuccess("${action}成功")
             loadData(pagination.currentPage, 10)
         }
     }

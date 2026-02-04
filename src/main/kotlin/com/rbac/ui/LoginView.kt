@@ -4,7 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.ThemeService
 import com.rbac.ui.dashboard.DashboardView
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -108,10 +108,10 @@ class LoginView(
             binder.writeBean(form)
             
             if (authService.login(form.username, form.password)) {
-                NotificationUtil.showSuccess("登录成功")
+                NotifyUtil.showSuccess("登录成功")
                 UI.getCurrent().navigate(DashboardView::class.java)
             } else {
-                NotificationUtil.showError("用户名或密码错误")
+                NotifyUtil.showError("用户名或密码错误")
             }
         }
     }

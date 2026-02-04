@@ -6,7 +6,7 @@ import com.github.mvysny.karibudsl.v10.textField
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.textfield.TextField
@@ -96,7 +96,7 @@ class PermissionFormDialog(
                 permissionService.updatePerm(dto)
             }
 
-            NotificationUtil.showSuccess("保存成功")
+            NotifyUtil.showSuccess("保存成功")
             close()
             onSuccess()
         }

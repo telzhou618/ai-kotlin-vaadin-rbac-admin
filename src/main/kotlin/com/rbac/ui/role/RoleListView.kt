@@ -9,7 +9,7 @@ import com.rbac.service.SysRoleService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.showConfirmDialog
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -125,7 +125,7 @@ class RoleListView(
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该角色吗？") {
             roleService.deleteRole(id)
-            NotificationUtil.showSuccess("删除成功")
+            NotifyUtil.showSuccess("删除成功")
             loadData(1, 20)
         }
     }

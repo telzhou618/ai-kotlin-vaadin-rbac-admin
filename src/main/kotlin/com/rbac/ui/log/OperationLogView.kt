@@ -10,8 +10,8 @@ import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
-import com.rbac.util.ExcelExportUtil
-import com.rbac.util.NotificationUtil
+import com.rbac.util.ExcelUtil
+import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.grid.Grid
@@ -148,7 +148,7 @@ class OperationLogView(
             val records = pageData.records
             // 验证数据
             if (records.isEmpty()) {
-                NotificationUtil.showError("没有数据可导出")
+                NotifyUtil.showError("没有数据可导出")
                 return
             }
             // 转换并导出
@@ -168,11 +168,11 @@ class OperationLogView(
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
             val fileName = "操作日志_${timestamp}.xlsx"
 
-            ExcelExportUtil.exportExcel(fileName, OperationLogExportDto::class.java, exportData)
-            NotificationUtil.showSuccess("导出成功，共 ${records.size} 条记录")
+            ExcelUtil.exportExcel(fileName, OperationLogExportDto::class.java, exportData)
+            NotifyUtil.showSuccess("导出成功，共 ${records.size} 条记录")
 
         }.onFailure { e ->
-            NotificationUtil.showError("导出失败：${e.message}")
+            NotifyUtil.showError("导出失败：${e.message}")
         }
     }
 }

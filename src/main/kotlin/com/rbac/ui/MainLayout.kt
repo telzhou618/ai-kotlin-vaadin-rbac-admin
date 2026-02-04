@@ -5,7 +5,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.service.ThemeService
-import com.rbac.util.NotificationUtil
+import com.rbac.util.NotifyUtil
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
@@ -119,7 +119,7 @@ class MainLayout(
     
     private fun handleLogout() {
         authService.logout()
-        NotificationUtil.showSuccess("退出成功")
+        NotifyUtil.showSuccess("退出成功")
         UI.getCurrent().navigate(LoginView::class.java)
     }
 }

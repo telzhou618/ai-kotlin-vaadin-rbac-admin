@@ -52,9 +52,11 @@ sa-token:
 
 # Vaadin
 vaadin:
-  launch-browser: true
+  launch-browser: false
   pnpm:
     enable: true
+  # 配置白名单包，加速启动（只扫描这些包）
+  whitelisted-packages: com.rbac,com.vaadin,org.vaadin
 # log
 logging:
   level:

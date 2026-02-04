@@ -22,6 +22,12 @@ webpack.generated.js
 
 # Logs
 *.log
+logs/
+
+# Deploy
+deploy/*.jar
+deploy/logs/
+deploy/application-prod.yml
 
 # Other
 target/

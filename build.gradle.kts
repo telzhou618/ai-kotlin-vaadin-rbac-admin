@@ -57,6 +57,12 @@ dependencyManagement {
     }
 }
 
+// Vaadin 生产构建配置
+vaadin {
+    // 生产模式优化
+    productionMode = true
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")

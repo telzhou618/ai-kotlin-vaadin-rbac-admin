@@ -69,7 +69,7 @@ spring:
     password: root  # 修改为你的密码
 ```
 
-### 4. 运行项目
+### 4. 运行项目（开发模式）
 
 ```bash
 # Windows
@@ -86,6 +86,43 @@ gradlew.bat bootRun
 **测试账号**:
 - 管理员: `admin/admin123` (所有权限)
 - 普通用户: `test/test123` (部分权限)
+
+## 生产环境打包
+
+### 方法一：使用脚本（推荐）
+
+```bash
+# Windows
+build-prod.bat
+
+# Linux/Mac
+chmod +x build-prod.sh
+./build-prod.sh
+```
+
+### 方法二：使用 Gradle 命令
+
+```bash
+# Windows
+gradle clean build -Pvaadin.productionMode -x test
+
+# Linux/Mac
+./gradlew clean build -Pvaadin.productionMode -x test
+```
+
+### 方法三：在 IntelliJ IDEA 中
+
+1. 创建 Run Configuration
+2. 配置参数：`-Pvaadin.productionMode -x test`
+3. 点击运行
+
+详细步骤请查看：[IDEA 快速构建指南](docs/IDEA_QUICK_START.md)
+
+**⚠️ 重要：** 必须添加 `-Pvaadin.productionMode` 参数，否则运行会报错！
+
+**构建结果：** `build/libs/rbac-system-1.0.0.jar`（约 100-120 MB）
+
+**部署文档：** [完整部署指南](docs/DEPLOYMENT_GUIDE.md)
 
 ## 权限控制
 

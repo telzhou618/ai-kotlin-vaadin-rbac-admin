@@ -1,6 +1,5 @@
 package com.rbac.ui.dashboard
 
-import com.github.mvysny.karibudsl.v10.*
 import com.rbac.config.DateFormatConfig
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
@@ -27,59 +26,67 @@ class DashboardView(
     private val dashboardService: DashboardService,
     private val logService: SysOperationLogService
 ) : VerticalLayout() {
-    
+
     init {
         setSizeFull()
         isPadding = true
-        setSpacing(true)
-        
+        isSpacing = true
+
         val data = dashboardService.getDashboardData()
-        
+
         // 统计卡片容器
         val statsLayout = HorizontalLayout().apply {
             width = "100%"
-            setSpacing(true)
+            isSpacing = true
         }
-        
+
         // 用户统计卡片
-        statsLayout.add(createStatCard(
-            title = "用户总数",
-            value = data.userCount.toString(),
-            icon = VaadinIcon.USER,
-            colorTheme = "primary"
-        ))
-        
+        statsLayout.add(
+            createStatCard(
+                title = "用户总数",
+                value = data.userCount.toString(),
+                icon = VaadinIcon.USER,
+                colorTheme = "primary"
+            )
+        )
+
         // 角色统计卡片
-        statsLayout.add(createStatCard(
-            title = "角色总数",
-            value = data.roleCount.toString(),
-            icon = VaadinIcon.GROUP,
-            colorTheme = "success"
-        ))
-        
+        statsLayout.add(
+            createStatCard(
+                title = "角色总数",
+                value = data.roleCount.toString(),
+                icon = VaadinIcon.GROUP,
+                colorTheme = "success"
+            )
+        )
+
         // 权限统计卡片
-        statsLayout.add(createStatCard(
-            title = "权限节点数",
-            value = data.permCount.toString(),
-            icon = VaadinIcon.LOCK,
-            colorTheme = "contrast"
-        ))
-        
+        statsLayout.add(
+            createStatCard(
+                title = "权限节点数",
+                value = data.permCount.toString(),
+                icon = VaadinIcon.LOCK,
+                colorTheme = "contrast"
+            )
+        )
+
         // 日志统计卡片
-        statsLayout.add(createStatCard(
-            title = "日志总数",
-            value = data.logCount.toString(),
-            icon = VaadinIcon.RECORDS,
-            colorTheme = "error"
-        ))
-        
+        statsLayout.add(
+            createStatCard(
+                title = "日志总数",
+                value = data.logCount.toString(),
+                icon = VaadinIcon.RECORDS,
+                colorTheme = "error"
+            )
+        )
+
         add(statsLayout)
-        
+
         // 最近操作日志标题
         add(H3("最近操作日志").apply {
             addClassNames(LumoUtility.Margin.Top.MEDIUM)
         })
-        
+
         // 日志表格
         val grid = Grid(SysOperationLog::class.java, false).apply {
             addColumn { it.username }.setHeader("用户").setAutoWidth(true)
@@ -92,12 +99,12 @@ class DashboardView(
             addColumn { log ->
                 DateFormatConfig.formatDateTime(log.createTime)
             }.setHeader("操作时间").setAutoWidth(true)
-            
+
             setItems(logService.getRecentLogs(10))
         }
         add(grid)
     }
-    
+
     /**
      * 创建统计卡片
      */
@@ -115,19 +122,19 @@ class DashboardView(
                 LumoUtility.Padding.LARGE
             )
             width = "25%"
-            
+
             // 卡片内容容器
             val content = VerticalLayout().apply {
                 isPadding = false
-                setSpacing(false)
+                isSpacing = true
             }
-            
+
             // 图标和标题行
             val headerLayout = HorizontalLayout().apply {
                 width = "100%"
                 justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
                 alignItems = FlexComponent.Alignment.CENTER
-                
+
                 // 标题
                 add(Span(title).apply {
                     addClassNames(
@@ -135,7 +142,7 @@ class DashboardView(
                         LumoUtility.TextColor.SECONDARY
                     )
                 })
-                
+
                 // 图标
                 add(icon.create().apply {
                     addClassNames(LumoUtility.IconSize.MEDIUM)
@@ -147,9 +154,9 @@ class DashboardView(
                     }
                 })
             }
-            
+
             content.add(headerLayout)
-            
+
             // 数值
             content.add(H2(value).apply {
                 addClassNames(
@@ -157,7 +164,7 @@ class DashboardView(
                     LumoUtility.Margin.Bottom.NONE
                 )
             })
-            
+
             add(content)
         }
     }

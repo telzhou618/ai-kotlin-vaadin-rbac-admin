@@ -35,6 +35,10 @@ dependencies {
     
     // Sa-Token
     implementation("cn.dev33:sa-token-spring-boot3-starter:1.37.0")
+    // Sa-Token Redis 集成（使用 Jackson 序列化）
+    implementation("cn.dev33:sa-token-redis-jackson:1.37.0")
+    // Redis 连接池
+    implementation("org.apache.commons:commons-pool2:2.12.0")
     
     // Hutool
     implementation("cn.hutool:hutool-all:5.8.24")

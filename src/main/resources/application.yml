@@ -16,6 +16,20 @@ spring:
     time-zone: GMT+8
     serialization:
       write-dates-as-timestamps: false
+  # Redis 配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:  # 如果 Redis 设置了密码，在这里填写
+      database: 0
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
 
 # MyBatis-Plus
 mybatis-plus:

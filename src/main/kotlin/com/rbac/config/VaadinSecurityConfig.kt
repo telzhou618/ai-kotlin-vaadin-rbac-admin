@@ -8,7 +8,7 @@ import com.rbac.annotation.Logical
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.annotation.RequiresRoles
 import com.rbac.exception.GlobalExceptionHandler
-import com.rbac.ui.AccessDeniedView
+import com.rbac.ui.component.AccessDeniedView
 import com.rbac.ui.LoginView
 import com.vaadin.flow.router.BeforeEnterEvent
 import com.vaadin.flow.server.ServiceInitEvent

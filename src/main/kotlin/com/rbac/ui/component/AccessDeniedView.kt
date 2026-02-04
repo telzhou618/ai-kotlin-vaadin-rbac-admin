@@ -1,6 +1,7 @@
-package com.rbac.ui
+package com.rbac.ui.component
 
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.ui.LoginView
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.H1

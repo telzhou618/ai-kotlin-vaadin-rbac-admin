@@ -49,7 +49,6 @@ class PermissionFormDialog(
                 width = "100%"
                 value = "$parentPermName($parentPermCode)"
                 isReadOnly = true
-                element.style.set("background-color", "#f5f5f5")
             }
 
             permCodeField = textField("权限编码") {

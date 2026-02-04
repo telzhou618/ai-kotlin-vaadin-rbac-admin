@@ -2,10 +2,12 @@ package com.rbac.ui
 
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
+import com.rbac.service.ThemeService
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.util.NotificationUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.PasswordField
@@ -22,7 +24,8 @@ data class LoginForm(
 @Route("login")
 @AnonymousAllowed
 class LoginView(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val themeService: ThemeService
 ) : VerticalLayout() {
     
     private lateinit var usernameField: TextField
@@ -31,6 +34,9 @@ class LoginView(
     private val binder = Binder(LoginForm::class.java)
     
     init {
+        // 初始化主题
+        themeService.initTheme()
+        
         setSizeFull()
         justifyContentMode = FlexComponent.JustifyContentMode.CENTER
         alignItems = FlexComponent.Alignment.CENTER
@@ -39,7 +45,33 @@ class LoginView(
             width = "400px"
             isPadding = true
             
-            h2("权限管理系统")
+            // 标题和主题切换按钮
+            horizontalLayout {
+                width = "100%"
+                justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
+                alignItems = FlexComponent.Alignment.CENTER
+                
+                h2("权限管理系统")
+                
+                button {
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    icon = if (themeService.isDarkTheme()) {
+                        VaadinIcon.SUN_O.create()
+                    } else {
+                        VaadinIcon.MOON_O.create()
+                    }
+                    element.setAttribute("title", "切换主题")
+                    onLeftClick { 
+                        themeService.toggleTheme()
+                        // 刷新图标
+                        icon = if (themeService.isDarkTheme()) {
+                            VaadinIcon.SUN_O.create()
+                        } else {
+                            VaadinIcon.MOON_O.create()
+                        }
+                    }
+                }
+            }
             
             usernameField = textField("用户名") {
                 width = "100%"

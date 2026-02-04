@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
+import com.rbac.service.ThemeService
 import com.rbac.util.NotificationUtil
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.ui.log.OperationLogView
@@ -24,10 +25,13 @@ import com.vaadin.flow.theme.lumo.LumoUtility
 
 class MainLayout(
     private val authService: AuthService,
-    private val userService: SysUserService
+    private val userService: SysUserService,
+    private val themeService: ThemeService
 ) : AppLayout() {
     
     init {
+        // 初始化主题
+        themeService.initTheme()
         createHeader()
         createDrawer()
     }
@@ -53,6 +57,26 @@ class MainLayout(
             })
             
             add(Span("欢迎你, $username"))
+            
+            // 主题切换按钮
+            button {
+                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = if (themeService.isDarkTheme()) {
+                    VaadinIcon.SUN_O.create()
+                } else {
+                    VaadinIcon.MOON_O.create()
+                }
+                element.setAttribute("title", "切换主题")
+                onLeftClick { 
+                    themeService.toggleTheme()
+                    // 刷新图标
+                    icon = if (themeService.isDarkTheme()) {
+                        VaadinIcon.SUN_O.create()
+                    } else {
+                        VaadinIcon.MOON_O.create()
+                    }
+                }
+            }
             
             button("退出") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)

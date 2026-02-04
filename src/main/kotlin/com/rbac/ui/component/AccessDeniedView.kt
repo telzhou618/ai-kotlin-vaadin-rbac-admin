@@ -1,6 +1,7 @@
 package com.rbac.ui.component
 
 import com.github.mvysny.karibudsl.v10.*
+import com.rbac.service.ThemeService
 import com.rbac.ui.LoginView
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.ButtonVariant
@@ -16,9 +17,14 @@ import com.vaadin.flow.server.auth.AnonymousAllowed
 @Route("access-denied")
 @PageTitle("访问被拒绝")
 @AnonymousAllowed
-class AccessDeniedView : VerticalLayout() {
+class AccessDeniedView(
+    private val themeService: ThemeService
+) : VerticalLayout() {
     
     init {
+        // 初始化主题
+        themeService.initTheme()
+        
         setSizeFull()
         justifyContentMode = FlexComponent.JustifyContentMode.CENTER
         alignItems = FlexComponent.Alignment.CENTER

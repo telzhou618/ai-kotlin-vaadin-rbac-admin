@@ -1,7 +1,10 @@
 package com.rbac.ui
 
 import cn.dev33.satoken.stp.StpUtil
-import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.karibudsl.v10.button
+import com.github.mvysny.karibudsl.v10.drawerToggle
+import com.github.mvysny.karibudsl.v10.onLeftClick
+import com.github.mvysny.karibudsl.v10.span
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.service.ThemeService
@@ -19,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
+import com.vaadin.flow.theme.lumo.LumoUtility
 
 class MainLayout(
     private val authService: AuthService,
@@ -45,7 +49,9 @@ class MainLayout(
 
             drawerToggle()
 
-            h3("权限管理系统")
+            span("权限管理系统") {
+                addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
+            }
 
             span {
                 element.style.set("flex-grow", "1")

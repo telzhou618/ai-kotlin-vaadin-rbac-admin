@@ -11,7 +11,6 @@ import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
 import com.rbac.ui.role.RoleListView
 import com.rbac.ui.test.BasicFormView
-import com.rbac.ui.test.TestView
 import com.rbac.ui.user.UserListView
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
@@ -116,8 +115,17 @@ class MainLayout(
         if (StpUtil.hasPermission("system:log:view")) {
             nav.addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
         }
-        nav.addItem(SideNavItem("测试页面", TestView::class.java))
-        nav.addItem(SideNavItem("基本的表单", BasicFormView::class.java))
+        // 子菜单测试
+        nav.addItem(SideNavItem("测试页面").apply {
+            prefixComponent = VaadinIcon.DROP.create() // 前缀是图标
+            addItem(SideNavItem("基本的表单", BasicFormView::class.java, VaadinIcon.LOCK.create()).apply {
+                val inboxCounter = Span("12").apply {
+                    element.themeList.add("badge contrast pill")
+                }
+                suffixComponent = inboxCounter  // 后缀是徽章
+            })
+        })
+
         addToDrawer(nav)
     }
 

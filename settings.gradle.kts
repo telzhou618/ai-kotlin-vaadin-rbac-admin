@@ -1,1 +1,1 @@
-rootProject.name = "rbac-system"
+rootProject.name = "rbac-admin"

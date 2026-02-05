@@ -1,9 +1,6 @@
 package com.rbac.ui.permission
 
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.h3
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.onLeftClick
+import com.github.mvysny.karibudsl.v10.*
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
@@ -30,7 +27,7 @@ class PermissionTreeView(
     init {
         setSizeFull()
         isPadding = true
-        h3("权限管理")
+        h4("权限管理")
         createToolbar()
         createTreeGrid()
 

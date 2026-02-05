@@ -41,7 +41,7 @@ class OperationLogView(
     init {
         setSizeFull()
         isPadding = true
-        h3("日志管理")
+        h4("日志管理")
         createToolbar()
         createGrid()
         createPagination()

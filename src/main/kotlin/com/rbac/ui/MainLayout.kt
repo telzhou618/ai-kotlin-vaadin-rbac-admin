@@ -1,8 +1,7 @@
 package com.rbac.ui
 
 import cn.dev33.satoken.stp.StpUtil
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.onLeftClick
+import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.service.ThemeService
@@ -10,21 +9,16 @@ import com.rbac.ui.dashboard.DashboardView
 import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
 import com.rbac.ui.role.RoleListView
-import com.rbac.ui.test.BasicFormView
-import com.rbac.ui.test.TestView
 import com.rbac.ui.user.UserListView
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
-import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.button.ButtonVariant
-import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
-import com.vaadin.flow.theme.lumo.LumoUtility
 
 class MainLayout(
     private val authService: AuthService,
@@ -49,18 +43,15 @@ class MainLayout(
             isPadding = true
             alignItems = FlexComponent.Alignment.CENTER
 
-            add(DrawerToggle())
+            drawerToggle()
 
-            add(Span("权限管理系统").apply {
-                addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
-            })
+            h3("权限管理系统")
 
-            add(Span().apply {
+            span {
                 element.style.set("flex-grow", "1")
-            })
+            }
 
-            add(Span("欢迎你, $username"))
-
+            span("$username, 欢迎你！")
             // 主题切换按钮
             button {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
@@ -116,19 +107,6 @@ class MainLayout(
         if (StpUtil.hasPermission("system:log:view")) {
             nav.addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
         }
-        // 子菜单测试
-        nav.addItem(SideNavItem("测试页面").apply {
-            prefixComponent = VaadinIcon.DROP.create() // 前缀是图标
-
-            addItem(SideNavItem("测试页面",TestView::class.java,VaadinIcon.USER.create()))
-
-            addItem(SideNavItem("基本的表单", BasicFormView::class.java, VaadinIcon.LOCK.create()).apply {
-                val inboxCounter = Span("12").apply {
-                    element.themeList.add("badge contrast pill")
-                }
-                suffixComponent = inboxCounter  // 后缀是徽章
-            })
-        })
 
         addToDrawer(nav)
     }

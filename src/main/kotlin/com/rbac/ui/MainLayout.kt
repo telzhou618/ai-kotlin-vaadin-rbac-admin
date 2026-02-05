@@ -11,6 +11,7 @@ import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
 import com.rbac.ui.role.RoleListView
 import com.rbac.ui.test.BasicFormView
+import com.rbac.ui.test.TestView
 import com.rbac.ui.user.UserListView
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
@@ -118,6 +119,9 @@ class MainLayout(
         // 子菜单测试
         nav.addItem(SideNavItem("测试页面").apply {
             prefixComponent = VaadinIcon.DROP.create() // 前缀是图标
+
+            addItem(SideNavItem("测试页面",TestView::class.java,VaadinIcon.USER.create()))
+
             addItem(SideNavItem("基本的表单", BasicFormView::class.java, VaadinIcon.LOCK.create()).apply {
                 val inboxCounter = Span("12").apply {
                     element.themeList.add("badge contrast pill")

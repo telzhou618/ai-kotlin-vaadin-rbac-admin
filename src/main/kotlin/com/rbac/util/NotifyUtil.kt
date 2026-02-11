@@ -34,12 +34,3 @@ fun showInfo(message: String) {
     val notification = Notification.show(message, 2000, Notification.Position.TOP_CENTER)
     notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY)
 }
-
-// 保留 NotifyUtil 对象以保持向后兼容
-@Deprecated("使用顶层函数 showError() 代替", ReplaceWith("showError(message)"))
-object NotifyUtil {
-    fun showError(message: String) = com.rbac.util.showError(message)
-    fun showSuccess(message: String) = com.rbac.util.showSuccess(message)
-    fun showWarning(message: String) = com.rbac.util.showWarning(message)
-    fun showInfo(message: String) = com.rbac.util.showInfo(message)
-}

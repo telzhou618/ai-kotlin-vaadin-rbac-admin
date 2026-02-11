@@ -123,6 +123,7 @@ class OperationLogView(
 
     private fun createPagination() {
         pagination = PaginationComponent { page, size -> loadData(page, size) }
+        add(pagination)
     }
 
     private fun loadData(page: Long, size: Int) {

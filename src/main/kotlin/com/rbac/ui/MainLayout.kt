@@ -30,6 +30,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.theme.lumo.LumoUtility
+import java.util.*
 
 class MainLayout(
     private val authService: AuthService,
@@ -107,7 +108,7 @@ class MainLayout(
                 isSpacing = true
                 element.style.set("gap", "var(--lumo-space-s)")
 
-                add(Avatar(username).apply {
+                add(Avatar(username.uppercase(Locale.getDefault())).apply {
                     element.style.set("width", "32px")
                     element.style.set("height", "32px")
                 })

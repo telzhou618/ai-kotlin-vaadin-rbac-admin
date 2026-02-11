@@ -1,6 +1,9 @@
 package com.rbac.ui.permission
 
-import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.karibudsl.v10.button
+import com.github.mvysny.karibudsl.v10.h4
+import com.github.mvysny.karibudsl.v10.horizontalLayout
+import com.github.mvysny.karibudsl.v10.onLeftClick
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
@@ -8,6 +11,7 @@ import com.rbac.ui.MainLayout
 import com.rbac.ui.component.showConfirmDialog
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -37,8 +41,12 @@ class PermissionTreeView(
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
+            isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
+
+            style.set("background", "var(--lumo-contrast-5pct)")
+            style.set("border-radius", "var(--lumo-border-radius-m)")
 
             horizontalLayout {
                 alignItems = FlexComponent.Alignment.END
@@ -57,6 +65,10 @@ class PermissionTreeView(
 
     private fun createTreeGrid() {
         treeGrid = TreeGrid<PermissionDto>().apply {
+            addThemeVariants(
+                GridVariant.LUMO_ROW_STRIPES,
+                GridVariant.LUMO_WRAP_CELL_CONTENT
+            )
             addHierarchyColumn { it.permName }.setHeader("权限名称")
             addColumn { it.permCode }.setHeader("权限编码")
             addComponentColumn { perm ->

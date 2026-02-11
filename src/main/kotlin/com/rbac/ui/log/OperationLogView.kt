@@ -15,6 +15,7 @@ import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -53,8 +54,12 @@ class OperationLogView(
 
         horizontalLayout {
             width = "100%"
+            isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
+
+            style.set("background", "var(--lumo-contrast-5pct)")
+            style.set("border-radius", "var(--lumo-border-radius-m)")
 
             horizontalLayout {
                 width = "100%"
@@ -93,8 +98,16 @@ class OperationLogView(
     }
 
     private fun createGrid() {
-        grid = Grid(SysOperationLog::class.java, false).apply {
-            addColumn { it.id }.setHeader("ID").width = "80px"
+        grid = grid<SysOperationLog> {
+            setSizeFull()
+            addThemeVariants(
+                GridVariant.LUMO_ROW_STRIPES,
+                GridVariant.LUMO_WRAP_CELL_CONTENT
+            )
+            addColumn { it.id }.setHeader("ID").apply {
+                width = "80px"
+                isSortable = true
+            }
             addColumn { it.username }.setHeader("用户")
             addColumn { it.module }.setHeader("模块")
             addColumn { it.operation }.setHeader("操作")
@@ -107,8 +120,6 @@ class OperationLogView(
             addColumn { log ->
                 DateFormatConfig.formatDateTime(log.createTime)
             }.setHeader("操作时间").width = "180px"
-
-            setSizeFull()
         }
         add(grid)
     }

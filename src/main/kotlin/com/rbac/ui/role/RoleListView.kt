@@ -12,6 +12,7 @@ import com.rbac.ui.component.showConfirmDialog
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -46,10 +47,13 @@ class RoleListView(
             width = "100%"
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
+            isPadding = true
+
+            style.set("background", "var(--lumo-contrast-5pct)")
+            style.set("border-radius", "var(--lumo-border-radius-m)")
 
             horizontalLayout {
                 alignItems = FlexComponent.Alignment.END
-
                 searchField = textField("搜索") {
                     placeholder = "输入角色名称搜索"
                     width = "300px"
@@ -70,8 +74,17 @@ class RoleListView(
     }
 
     private fun createGrid() {
-        grid = Grid(SysRole::class.java, false).apply {
-            addColumn { it.id }.setHeader("ID").width = "80px"
+        grid = grid<SysRole>() {
+            setSizeFull()
+            setSelectionMode(Grid.SelectionMode.MULTI)
+            addThemeVariants(
+                GridVariant.LUMO_ROW_STRIPES,
+                GridVariant.LUMO_WRAP_CELL_CONTENT
+            )
+            addColumn { it.id }.setHeader("ID").apply {
+                width = "80px"
+                isSortable = true
+            }
             addColumn { it.roleCode }.setHeader("角色编码")
             addColumn { it.roleName }.setHeader("角色名称")
             addColumn { it.roleDesc }.setHeader("角色描述")
@@ -91,8 +104,6 @@ class RoleListView(
                     }
                 }
             }.setHeader("操作")
-
-            setSizeFull()
         }
         add(grid)
     }

@@ -4,6 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
+
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
@@ -40,6 +41,9 @@ class RoleFormDialog(
         }
         
         verticalLayout {
+            isPadding = false
+            isSpacing = true
+            
             roleCodeField = textField("角色编码") {
                 width = "100%"
             }
@@ -53,20 +57,7 @@ class RoleFormDialog(
             }
         }
         
-        // 配置 Binder 验证规则
-        binder.forField(roleCodeField)
-            .asRequired("角色编码不能为空")
-            .withValidator(StringLengthValidator("角色编码长度必须在2-50个字符之间", 2, 50))
-            .bind(RoleDto::roleCode.name)
-        
-        binder.forField(roleNameField)
-            .asRequired("角色名称不能为空")
-            .withValidator(StringLengthValidator("角色名称长度必须在2-50个字符之间", 2, 50))
-            .bind(RoleDto::roleName.name)
-        
-        binder.forField(roleDescField)
-            .bind(RoleDto::roleDesc.name)
-        
+        configureBinder()
         binder.readBean(dto)
         
         footer.add(
@@ -79,6 +70,21 @@ class RoleFormDialog(
                 onLeftClick { handleSave() }
             }
         )
+    }
+    
+    private fun configureBinder() {
+        binder.forField(roleCodeField)
+            .asRequired("角色编码不能为空")
+            .withValidator(StringLengthValidator("角色编码长度必须在2-50个字符之间", 2, 50))
+            .bind(RoleDto::roleCode.name)
+        
+        binder.forField(roleNameField)
+            .asRequired("角色名称不能为空")
+            .withValidator(StringLengthValidator("角色名称长度必须在2-50个字符之间", 2, 50))
+            .bind(RoleDto::roleName.name)
+        
+        binder.forField(roleDescField)
+            .bind(RoleDto::roleDesc.name)
     }
     
     private fun handleSave() {

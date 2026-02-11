@@ -1,10 +1,6 @@
 package com.rbac.ui
 
 import cn.dev33.satoken.stp.StpUtil
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.drawerToggle
-import com.github.mvysny.karibudsl.v10.onLeftClick
-import com.github.mvysny.karibudsl.v10.span
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.service.ThemeService
@@ -16,7 +12,10 @@ import com.rbac.ui.user.UserListView
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
+import com.vaadin.flow.component.applayout.DrawerToggle
+import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -31,7 +30,6 @@ class MainLayout(
 ) : AppLayout() {
 
     init {
-        // 初始化主题
         themeService.initTheme()
         createHeader()
         createDrawer()
@@ -47,19 +45,19 @@ class MainLayout(
             isPadding = true
             alignItems = FlexComponent.Alignment.CENTER
 
-            drawerToggle()
+            add(DrawerToggle())
 
-            span("权限管理系统") {
+            add(Span("权限管理系统").apply {
                 addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
-            }
+            })
 
-            span {
+            add(Span().apply {
                 element.style.set("flex-grow", "1")
-            }
+            })
 
-            span("$username, 欢迎你！")
-            // 主题切换按钮
-            button {
+            add(Span("$username, 欢迎你！"))
+
+            add(Button().apply {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                 icon = if (themeService.isDarkTheme()) {
                     VaadinIcon.SUN_O.create()
@@ -67,51 +65,45 @@ class MainLayout(
                     VaadinIcon.MOON_O.create()
                 }
                 element.setAttribute("title", "切换主题")
-                onLeftClick {
+                addClickListener {
                     themeService.toggleTheme()
-                    // 刷新图标
                     icon = if (themeService.isDarkTheme()) {
                         VaadinIcon.SUN_O.create()
                     } else {
                         VaadinIcon.MOON_O.create()
                     }
                 }
-            }
+            })
 
-            button("退出") {
+            add(Button("退出").apply {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                 icon = VaadinIcon.SIGN_OUT.create()
-                onLeftClick { handleLogout() }
-            }
+                addClickListener { handleLogout() }
+            })
         }
 
         addToNavbar(true, header)
     }
 
     private fun createDrawer() {
-        val nav = SideNav()
+        val nav = SideNav().apply {
+            addItem(SideNavItem("首页", DashboardView::class.java, VaadinIcon.DASHBOARD.create()))
 
-        // 首页 - 所有登录用户都可以访问
-        nav.addItem(SideNavItem("首页", DashboardView::class.java, VaadinIcon.DASHBOARD.create()))
+            if (StpUtil.hasPermission("system:user:view")) {
+                addItem(SideNavItem("用户管理", UserListView::class.java, VaadinIcon.USER.create()))
+            }
 
-        // 用户管理 - 需要 system:user:view 权限
-        if (StpUtil.hasPermission("system:user:view")) {
-            nav.addItem(SideNavItem("用户管理", UserListView::class.java, VaadinIcon.USER.create()))
-        }
+            if (StpUtil.hasPermission("system:role:view")) {
+                addItem(SideNavItem("角色管理", RoleListView::class.java, VaadinIcon.GROUP.create()))
+            }
 
-        // 角色管理 - 需要 system:role:view 权限
-        if (StpUtil.hasPermission("system:role:view")) {
-            nav.addItem(SideNavItem("角色管理", RoleListView::class.java, VaadinIcon.GROUP.create()))
-        }
+            if (StpUtil.hasPermission("system:permission:view")) {
+                addItem(SideNavItem("权限管理", PermissionTreeView::class.java, VaadinIcon.LOCK.create()))
+            }
 
-        // 权限管理 - 需要 system:permission:view 权限
-        if (StpUtil.hasPermission("system:permission:view")) {
-            nav.addItem(SideNavItem("权限管理", PermissionTreeView::class.java, VaadinIcon.LOCK.create()))
-        }
-
-        // 操作日志 - 需要 system:log:view 权限
-        if (StpUtil.hasPermission("system:log:view")) {
-            nav.addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
+            if (StpUtil.hasPermission("system:log:view")) {
+                addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
+            }
         }
 
         addToDrawer(nav)

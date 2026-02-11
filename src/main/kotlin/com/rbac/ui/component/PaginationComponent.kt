@@ -1,9 +1,6 @@
 package com.rbac.ui.component
 
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.onLeftClick
-import com.github.mvysny.karibudsl.v10.select
-import com.github.mvysny.karibudsl.v10.textField
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -17,8 +14,8 @@ class PaginationComponent(
     var currentPage = 1L
         private set
     private var totalPages = 1L
-    private var totalRecords = 0L  // 总记录数
-    private var pageSize = 20  // 默认每页20条
+    private var totalRecords = 0L
+    private var pageSize = 20
 
     private lateinit var pageInfo: TextField
     private lateinit var recordInfo: TextField
@@ -28,7 +25,6 @@ class PaginationComponent(
         alignItems = FlexComponent.Alignment.CENTER
         isSpacing = true
 
-        // 总记录数显示
         recordInfo = textField {
             width = "150px"
             isReadOnly = true
@@ -62,7 +58,7 @@ class PaginationComponent(
         pageSizeSelect = select {
             width = "100px"
             setItems(10, 20, 50, 100)
-            value = 20  // 默认选中20
+            value = 20
             addValueChangeListener {
                 pageSize = it.value
                 goToPage(1)

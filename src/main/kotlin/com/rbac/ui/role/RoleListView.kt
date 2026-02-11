@@ -9,6 +9,7 @@ import com.rbac.service.SysRoleService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.ui.component.toolbarStyle
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -22,7 +23,7 @@ import com.vaadin.flow.router.Route
 
 @Route("roles", layout = MainLayout::class)
 @PageTitle("角色管理")
-@RequiresPermissions("system:role:view")  // 需要角色查看权限
+@RequiresPermissions("system:role:view")
 class RoleListView(
     private val roleService: SysRoleService
 ) : VerticalLayout() {
@@ -34,37 +35,34 @@ class RoleListView(
     init {
         setSizeFull()
         isPadding = true
+        
         h4("角色管理")
         createToolbar()
         createGrid()
         createPagination()
-
         loadData(1, 20)
     }
 
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
+            isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
-            isPadding = true
-
-            style.set("background", "var(--lumo-contrast-5pct)")
-            style.set("border-radius", "var(--lumo-border-radius-m)")
-
+            toolbarStyle()
+            
             horizontalLayout {
                 alignItems = FlexComponent.Alignment.END
                 searchField = textField("搜索") {
                     placeholder = "输入角色名称搜索"
                     width = "300px"
                 }
-
                 button("查询") {
                     icon = VaadinIcon.SEARCH.create()
                     onLeftClick { loadData(1, 20) }
                 }
-
             }
+
             button("新增") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.PLUS.create()
@@ -74,20 +72,20 @@ class RoleListView(
     }
 
     private fun createGrid() {
-        grid = grid<SysRole>() {
+        grid = grid {
             setSizeFull()
             setSelectionMode(Grid.SelectionMode.MULTI)
-            addThemeVariants(
-                GridVariant.LUMO_ROW_STRIPES,
-                GridVariant.LUMO_WRAP_CELL_CONTENT
-            )
-            addColumn { it.id }.setHeader("ID").apply {
+            addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
+            
+            columnFor(SysRole::id) {
+                setHeader("ID")
                 width = "80px"
                 isSortable = true
             }
-            addColumn { it.roleCode }.setHeader("角色编码")
-            addColumn { it.roleName }.setHeader("角色名称")
-            addColumn { it.roleDesc }.setHeader("角色描述")
+            columnFor(SysRole::roleCode) { setHeader("角色编码") }
+            columnFor(SysRole::roleName) { setHeader("角色名称") }
+            columnFor(SysRole::roleDesc) { setHeader("角色描述") }
+            
             addComponentColumn { role ->
                 horizontalLayout {
                     button("编辑") {
@@ -105,12 +103,10 @@ class RoleListView(
                 }
             }.setHeader("操作")
         }
-        add(grid)
     }
 
     private fun createPagination() {
         pagination = PaginationComponent { page, size -> loadData(page, size) }
-        add(pagination)
     }
 
     private fun loadData(page: Long, size: Int) {

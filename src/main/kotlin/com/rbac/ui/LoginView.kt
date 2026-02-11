@@ -3,6 +3,7 @@ package com.rbac.ui
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.ThemeService
+
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.UI
@@ -34,7 +35,6 @@ class LoginView(
     private val binder = Binder(LoginForm::class.java)
     
     init {
-        // 初始化主题
         themeService.initTheme()
         
         setSizeFull()
@@ -45,7 +45,6 @@ class LoginView(
             width = "400px"
             isPadding = true
             
-            // 标题和主题切换按钮
             horizontalLayout {
                 width = "100%"
                 justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
@@ -63,7 +62,6 @@ class LoginView(
                     element.setAttribute("title", "切换主题")
                     onLeftClick { 
                         themeService.toggleTheme()
-                        // 刷新图标
                         icon = if (themeService.isDarkTheme()) {
                             VaadinIcon.SUN_O.create()
                         } else {
@@ -73,24 +71,33 @@ class LoginView(
                 }
             }
             
-            usernameField = textField("用户名") {
-                width = "100%"
-                placeholder = "请输入用户名"
-            }
-            
-            passwordField = passwordField("密码") {
-                width = "100%"
-                placeholder = "请输入密码"
-            }
-            
-            button("登录") {
-                width = "100%"
-                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                onLeftClick { handleLogin() }
+            verticalLayout {
+                isPadding = false
+                isSpacing = true
+                
+                usernameField = textField("用户名") {
+                    width = "100%"
+                    placeholder = "请输入用户名"
+                }
+                
+                passwordField = passwordField("密码") {
+                    width = "100%"
+                    placeholder = "请输入密码"
+                }
+                
+                button("登录") {
+                    width = "100%"
+                    addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                    onLeftClick { handleLogin() }
+                }
             }
         }
         
-        // 配置 Binder 验证规则
+        configureBinder()
+        binder.readBean(LoginForm())
+    }
+    
+    private fun configureBinder() {
         binder.forField(usernameField)
             .asRequired("用户名不能为空")
             .bind(LoginForm::username.name)

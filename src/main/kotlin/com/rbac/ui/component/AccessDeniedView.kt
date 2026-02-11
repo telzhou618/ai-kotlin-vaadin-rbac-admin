@@ -22,7 +22,6 @@ class AccessDeniedView(
 ) : VerticalLayout() {
     
     init {
-        // 初始化主题
         themeService.initTheme()
         
         setSizeFull()
@@ -33,29 +32,26 @@ class AccessDeniedView(
             alignItems = FlexComponent.Alignment.CENTER
             
             icon(VaadinIcon.BAN) {
-                element.style.set("width", "100px")
-                element.style.set("height", "100px")
-                element.style.set("color", "var(--lumo-error-color)")
+                element.style.apply {
+                    set("width", "100px")
+                    set("height", "100px")
+                    set("color", "var(--lumo-error-color)")
+                }
             }
             
             add(H1("403 - 访问被拒绝"))
-            
             add(Paragraph("抱歉，您没有权限访问此页面"))
             
             button("返回首页") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.HOME.create()
-                onLeftClick {
-                    UI.getCurrent().navigate("")
-                }
+                onLeftClick { UI.getCurrent().navigate("") }
             }
             
             button("返回登录") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                 icon = VaadinIcon.SIGN_IN.create()
-                onLeftClick {
-                    UI.getCurrent().navigate(LoginView::class.java)
-                }
+                onLeftClick { UI.getCurrent().navigate(LoginView::class.java) }
             }
         }
     }

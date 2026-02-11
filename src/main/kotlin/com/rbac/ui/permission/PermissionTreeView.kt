@@ -1,14 +1,12 @@
 package com.rbac.ui.permission
 
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.h4
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.onLeftClick
+import com.github.mvysny.karibudsl.v10.*
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.ui.component.toolbarStyle
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.GridVariant
@@ -21,7 +19,7 @@ import com.vaadin.flow.router.Route
 
 @Route("permissions", layout = MainLayout::class)
 @PageTitle("权限管理")
-@RequiresPermissions("system:permission:view")  // 需要权限查看权限
+@RequiresPermissions("system:permission:view")
 class PermissionTreeView(
     private val permissionService: SysPermissionService
 ) : VerticalLayout() {
@@ -31,10 +29,10 @@ class PermissionTreeView(
     init {
         setSizeFull()
         isPadding = true
+        
         h4("权限管理")
         createToolbar()
         createTreeGrid()
-
         loadData()
     }
 
@@ -44,10 +42,8 @@ class PermissionTreeView(
             isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
-
-            style.set("background", "var(--lumo-contrast-5pct)")
-            style.set("border-radius", "var(--lumo-border-radius-m)")
-
+            toolbarStyle()
+            
             horizontalLayout {
                 alignItems = FlexComponent.Alignment.END
                 button("刷新") {
@@ -55,6 +51,7 @@ class PermissionTreeView(
                     onLeftClick { loadData() }
                 }
             }
+            
             button("新增根权限") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.PLUS.create()
@@ -65,12 +62,12 @@ class PermissionTreeView(
 
     private fun createTreeGrid() {
         treeGrid = TreeGrid<PermissionDto>().apply {
-            addThemeVariants(
-                GridVariant.LUMO_ROW_STRIPES,
-                GridVariant.LUMO_WRAP_CELL_CONTENT
-            )
+            setSizeFull()
+            addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
+            
             addHierarchyColumn { it.permName }.setHeader("权限名称")
             addColumn { it.permCode }.setHeader("权限编码")
+            
             addComponentColumn { perm ->
                 horizontalLayout {
                     button("新增子权限") {
@@ -87,8 +84,6 @@ class PermissionTreeView(
                     }
                 }
             }.setHeader("操作")
-
-            setSizeFull()
         }
         add(treeGrid)
     }

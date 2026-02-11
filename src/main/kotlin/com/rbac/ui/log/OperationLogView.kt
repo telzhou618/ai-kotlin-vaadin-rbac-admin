@@ -10,6 +10,7 @@ import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
+import com.rbac.ui.component.toolbarStyle
 import com.rbac.util.ExcelUtil
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
@@ -27,7 +28,7 @@ import java.time.format.DateTimeFormatter
 
 @Route("logs", layout = MainLayout::class)
 @PageTitle("操作日志")
-@RequiresPermissions("system:log:view")  // 需要日志查看权限
+@RequiresPermissions("system:log:view")
 class OperationLogView(
     private val logService: SysOperationLogService
 ) : VerticalLayout() {
@@ -42,29 +43,25 @@ class OperationLogView(
     init {
         setSizeFull()
         isPadding = true
+        
         h4("日志管理")
         createToolbar()
         createGrid()
         createPagination()
-
         loadData(1, 20)
     }
 
     private fun createToolbar() {
-
         horizontalLayout {
             width = "100%"
             isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
-
-            style.set("background", "var(--lumo-contrast-5pct)")
-            style.set("border-radius", "var(--lumo-border-radius-m)")
-
+            toolbarStyle()
+            
             horizontalLayout {
-                width = "100%"
                 alignItems = FlexComponent.Alignment.END
-
+                
                 usernameField = textField("用户名") {
                     placeholder = "输入用户名"
                     width = "150px"
@@ -98,71 +95,57 @@ class OperationLogView(
     }
 
     private fun createGrid() {
-        grid = grid<SysOperationLog> {
+        grid = grid {
             setSizeFull()
-            addThemeVariants(
-                GridVariant.LUMO_ROW_STRIPES,
-                GridVariant.LUMO_WRAP_CELL_CONTENT
-            )
-            addColumn { it.id }.setHeader("ID").apply {
+            addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
+            
+            columnFor(SysOperationLog::id) {
+                setHeader("ID")
                 width = "80px"
                 isSortable = true
             }
-            addColumn { it.username }.setHeader("用户")
-            addColumn { it.module }.setHeader("模块")
-            addColumn { it.operation }.setHeader("操作")
-            addColumn { it.responseCode }.setHeader("状态码")
-            addColumn { it.responseMsg }.setHeader("响应消息")
-            addColumn { it.ip }.setHeader("IP")
-            addColumn { it.executeTime }.setHeader("耗时(ms)")
+            columnFor(SysOperationLog::username) { setHeader("用户") }
+            columnFor(SysOperationLog::module) { setHeader("模块") }
+            columnFor(SysOperationLog::operation) { setHeader("操作") }
+            columnFor(SysOperationLog::responseCode) { setHeader("状态码") }
+            columnFor(SysOperationLog::responseMsg) { setHeader("响应消息") }
+            columnFor(SysOperationLog::ip) { setHeader("IP") }
+            columnFor(SysOperationLog::executeTime) { setHeader("耗时(ms)") }
 
-            // 格式化日期时间列
             addColumn { log ->
                 DateFormatConfig.formatDateTime(log.createTime)
-            }.setHeader("操作时间").width = "180px"
+            }.apply {
+                setHeader("操作时间")
+                width = "180px"
+            }
         }
-        add(grid)
     }
 
     private fun createPagination() {
         pagination = PaginationComponent { page, size -> loadData(page, size) }
-        add(pagination)
     }
 
     private fun loadData(page: Long, size: Int) {
-        val query = LogQueryDto(
-            username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
-            module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
-            startTime = startDatePicker.value?.atStartOfDay(),
-            endTime = endDatePicker.value?.atTime(23, 59, 59)
-        )
-
+        val query = buildQuery()
         val pageData = logService.pageQuery(Page(page, size.toLong()), query)
         grid.setItems(pageData.records)
         pagination.updatePagination(pageData.current, pageData.pages, pageData.total)
     }
-
 
     /**
      * 导出 Excel
      */
     private fun exportToExcel() {
         runCatching {
-            // 获取数据
-            val query = LogQueryDto(
-                username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
-                module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
-                startTime = startDatePicker.value?.atStartOfDay(),
-                endTime = endDatePicker.value?.atTime(23, 59, 59)
-            )
+            val query = buildQuery()
             val pageData = logService.pageQuery(Page(0, Long.MAX_VALUE), query)
             val records = pageData.records
-            // 验证数据
+            
             if (records.isEmpty()) {
                 NotifyUtil.showError("没有数据可导出")
                 return
             }
-            // 转换并导出
+            
             val exportData = records.map { log ->
                 OperationLogExportDto(
                     id = log.id,
@@ -176,6 +159,7 @@ class OperationLogView(
                     createTime = DateFormatConfig.formatDateTime(log.createTime)
                 )
             }
+            
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
             val fileName = "操作日志_${timestamp}.xlsx"
 
@@ -186,4 +170,11 @@ class OperationLogView(
             NotifyUtil.showError("导出失败：${e.message}")
         }
     }
+    
+    private fun buildQuery() = LogQueryDto(
+        username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
+        module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },
+        startTime = startDatePicker.value?.atStartOfDay(),
+        endTime = endDatePicker.value?.atTime(23, 59, 59)
+    )
 }

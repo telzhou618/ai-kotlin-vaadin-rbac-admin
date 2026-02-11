@@ -4,6 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.UserDto
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
+
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.CheckboxGroup
@@ -36,6 +37,9 @@ class UserFormDialog(
         val dto = user ?: UserDto(status = 1, roleIds = emptyList())
         
         verticalLayout {
+            isPadding = false
+            isSpacing = true
+            
             usernameField = textField("用户名") {
                 width = "100%"
             }
@@ -45,24 +49,39 @@ class UserFormDialog(
                 placeholder = if (user == null) "请输入密码" else "留空则不修改"
             }
             
-            statusSelect = select<Int>("状态") {
+            statusSelect = select("状态") {
                 width = "100%"
                 setItems(1, 0)
                 setItemLabelGenerator { if (it == 1) "启用" else "禁用" }
             }
             
-            val roleCheckboxGroup = CheckboxGroup<Long>()
-            roleCheckboxGroup.label = "分配角色"
-            roleCheckboxGroup.width = "100%"
-            roleCheckboxGroup.setItems(roles.map { it.id!! })
-            roleCheckboxGroup.setItemLabelGenerator { roleId ->
-                roles.find { it.id == roleId }?.roleName ?: ""
+            roleCheckbox = CheckboxGroup<Long>().apply {
+                label = "分配角色"
+                width = "100%"
+                setItems(roles.map { it.id!! })
+                setItemLabelGenerator { roleId ->
+                    roles.find { it.id == roleId }?.roleName ?: ""
+                }
             }
-            roleCheckbox = roleCheckboxGroup
-            add(roleCheckboxGroup)
+            add(roleCheckbox)
         }
         
-        // 配置 Binder 验证规则
+        configureBinder()
+        binder.readBean(dto)
+        
+        footer.add(
+            button("取消") {
+                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                onLeftClick { close() }
+            },
+            button("保存") {
+                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                onLeftClick { handleSave() }
+            }
+        )
+    }
+    
+    private fun configureBinder() {
         binder.forField(usernameField)
             .asRequired("用户名不能为空")
             .withValidator(StringLengthValidator("用户名长度必须在2-20个字符之间", 2, 20))
@@ -95,19 +114,6 @@ class UserFormDialog(
                 { it?.toSet() ?: emptySet() }
             )
             .bind(UserDto::roleIds.name)
-        
-        binder.readBean(dto)
-        
-        footer.add(
-            button("取消") {
-                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                onLeftClick { close() }
-            },
-            button("保存") {
-                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                onLeftClick { handleSave() }
-            }
-        )
     }
     
     private fun handleSave() {

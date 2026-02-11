@@ -8,7 +8,9 @@ import com.rbac.dto.UserQueryDto
 import com.rbac.service.SysUserService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
+import com.rbac.ui.component.badgeStyle
 import com.rbac.ui.component.showConfirmDialog
+import com.rbac.ui.component.toolbarStyle
 import com.rbac.util.NotifyUtil
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -22,7 +24,7 @@ import com.vaadin.flow.router.Route
 
 @Route("users", layout = MainLayout::class)
 @PageTitle("用户管理")
-@RequiresPermissions("system:user:view")  // 需要用户查看权限
+@RequiresPermissions("system:user:view")
 class UserListView(
     private val userService: SysUserService
 ) : VerticalLayout() {
@@ -34,24 +36,22 @@ class UserListView(
     init {
         setSizeFull()
         isPadding = true
+        
         h4("用户管理")
         createToolbar()
         createGrid()
         createPagination()
-
         loadData(1, 20)
     }
 
     private fun createToolbar() {
         horizontalLayout {
             width = "100%"
+            isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.END
-            isPadding = true
-
-            style.set("background", "var(--lumo-contrast-5pct)")
-            style.set("border-radius", "var(--lumo-border-radius-m)")
-
+            toolbarStyle()
+            
             horizontalLayout {
                 alignItems = FlexComponent.Alignment.END
                 searchField = textField("搜索") {
@@ -63,6 +63,7 @@ class UserListView(
                     onLeftClick { loadData(1, 20) }
                 }
             }
+            
             button("新增") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
                 icon = VaadinIcon.PLUS.create()
@@ -72,39 +73,26 @@ class UserListView(
     }
 
     private fun createGrid() {
-        grid = Grid(UserDto::class.java, false).apply {
+        grid = grid {
+            setSizeFull()
+            addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
-            addThemeVariants(
-                GridVariant.LUMO_ROW_STRIPES,
-                GridVariant.LUMO_WRAP_CELL_CONTENT
-            )
-
-            addColumn { it.id }.setHeader("ID").apply {
+            columnFor(UserDto::id) {
+                setHeader("ID")
                 width = "80px"
                 isSortable = true
             }
-            addColumn { it.username }.setHeader("用户名")
-            addColumn { it.roleNames }.setHeader("角色")
+            columnFor(UserDto::username) { setHeader("用户名") }
+            columnFor(UserDto::roleNames) { setHeader("角色") }
 
-            // 状态列 - 带颜色高亮
             addComponentColumn { user ->
-                val statusText = if (user.status == 1) "启用" else "禁用"
-                val badge = span(statusText) {
-                    element.themeList.add(if (user.status == 1) "badge success" else "badge error")
-                    element.style.set("padding", "4px 8px")
-                    element.style.set("border-radius", "4px")
-                    element.style.set("font-size", "12px")
-                    element.style.set("font-weight", "500")
-                    if (user.status == 1) {
-                        element.style.set("background-color", "#e7f5e9")
-                        element.style.set("color", "#2e7d32")
-                    } else {
-                        element.style.set("background-color", "#fdecea")
-                        element.style.set("color", "#d32f2f")
-                    }
+                span(if (user.status == 1) "启用" else "禁用") {
+                    badgeStyle(user.status == 1)
                 }
-                badge
-            }.setHeader("状态").width = "100px"
+            }.apply {
+                setHeader("状态")
+                width = "100px"
+            }
 
             addComponentColumn { user ->
                 horizontalLayout {
@@ -113,17 +101,12 @@ class UserListView(
                         onLeftClick { showFormDialog(user) }
                     }
 
-                    // 启用/禁用按钮
-                    if (user.status == 1) {
-                        button("禁用") {
-                            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_CONTRAST)
-                            onLeftClick { handleToggleStatus(user.id!!, 0) }
-                        }
-                    } else {
-                        button("启用") {
-                            addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_SUCCESS)
-                            onLeftClick { handleToggleStatus(user.id!!, 1) }
-                        }
+                    button(if (user.status == 1) "禁用" else "启用") {
+                        addThemeVariants(
+                            ButtonVariant.LUMO_SMALL,
+                            if (user.status == 1) ButtonVariant.LUMO_CONTRAST else ButtonVariant.LUMO_SUCCESS
+                        )
+                        onLeftClick { handleToggleStatus(user.id!!, if (user.status == 1) 0 else 1) }
                     }
 
                     button("删除") {
@@ -131,16 +114,15 @@ class UserListView(
                         onLeftClick { handleDelete(user.id!!) }
                     }
                 }
-            }.setHeader("操作").width = "280px"
-
-            setSizeFull()
+            }.apply {
+                setHeader("操作")
+                width = "280px"
+            }
         }
-        add(grid)
     }
 
     private fun createPagination() {
         pagination = PaginationComponent { page, size -> loadData(page, size) }
-        add(pagination)
     }
 
     private fun loadData(page: Long, size: Int) {

@@ -9,8 +9,7 @@ import com.rbac.dto.OperationLogExportDto
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.PaginationComponent
-import com.rbac.ui.component.toolbarStyle
+import com.rbac.ui.component.*
 import com.rbac.util.ExcelUtil
 import com.rbac.util.showError
 import com.rbac.util.showSuccess
@@ -42,8 +41,7 @@ class OperationLogView(
     private lateinit var pagination: PaginationComponent
 
     init {
-        setSizeFull()
-        isPadding = true
+        pageContainerStyle()
         
         h4("日志管理")
         createToolbar()
@@ -61,7 +59,7 @@ class OperationLogView(
             toolbarStyle()
             
             horizontalLayout {
-                alignItems = FlexComponent.Alignment.END
+                searchAreaStyle()
                 
                 usernameField = textField("用户名") {
                     placeholder = "输入用户名"
@@ -97,7 +95,7 @@ class OperationLogView(
 
     private fun createGrid() {
         grid = grid {
-            setSizeFull()
+            applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
             
             columnFor(SysOperationLog::id) {

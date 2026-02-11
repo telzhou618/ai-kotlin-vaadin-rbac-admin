@@ -6,7 +6,7 @@ import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.cardStyle
+import com.rbac.ui.component.*
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H2
@@ -30,15 +30,14 @@ class DashboardView(
 ) : VerticalLayout() {
 
     init {
-        setSizeFull()
-        isPadding = true
-        isSpacing = true
+        pageContainerStyle()
 
         val data = dashboardService.getDashboardData()
 
         horizontalLayout {
             width = "100%"
             isSpacing = true
+            marginBottom("l")
 
             add(createStatCard("用户总数", data.userCount.toString(), VaadinIcon.USER, "primary"))
             add(createStatCard("角色总数", data.roleCount.toString(), VaadinIcon.GROUP, "success"))
@@ -51,6 +50,7 @@ class DashboardView(
         })
 
         grid<SysOperationLog> {
+            applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
             
             columnFor(SysOperationLog::username) { setHeader("用户").isAutoWidth = true }

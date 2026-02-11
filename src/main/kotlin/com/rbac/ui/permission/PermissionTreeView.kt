@@ -5,8 +5,7 @@ import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.showConfirmDialog
-import com.rbac.ui.component.toolbarStyle
+import com.rbac.ui.component.*
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.GridVariant
@@ -27,8 +26,7 @@ class PermissionTreeView(
     private lateinit var treeGrid: TreeGrid<PermissionDto>
 
     init {
-        setSizeFull()
-        isPadding = true
+        pageContainerStyle()
         
         h4("权限管理")
         createToolbar()
@@ -45,7 +43,7 @@ class PermissionTreeView(
             toolbarStyle()
             
             horizontalLayout {
-                alignItems = FlexComponent.Alignment.END
+                searchAreaStyle()
                 button("刷新") {
                     icon = VaadinIcon.REFRESH.create()
                     onLeftClick { loadData() }
@@ -62,7 +60,7 @@ class PermissionTreeView(
 
     private fun createTreeGrid() {
         treeGrid = TreeGrid<PermissionDto>().apply {
-            setSizeFull()
+            applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
             
             addHierarchyColumn { it.permName }.setHeader("权限名称")

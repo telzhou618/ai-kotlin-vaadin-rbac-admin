@@ -7,9 +7,7 @@ import com.rbac.dto.RoleQueryDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.PaginationComponent
-import com.rbac.ui.component.showConfirmDialog
-import com.rbac.ui.component.toolbarStyle
+import com.rbac.ui.component.*
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -33,8 +31,7 @@ class RoleListView(
     private lateinit var pagination: PaginationComponent
 
     init {
-        setSizeFull()
-        isPadding = true
+        pageContainerStyle()
         
         h4("角色管理")
         createToolbar()
@@ -52,7 +49,7 @@ class RoleListView(
             toolbarStyle()
             
             horizontalLayout {
-                alignItems = FlexComponent.Alignment.END
+                searchAreaStyle()
                 searchField = textField("搜索") {
                     placeholder = "输入角色名称搜索"
                     width = "300px"
@@ -73,7 +70,7 @@ class RoleListView(
 
     private fun createGrid() {
         grid = grid {
-            setSizeFull()
+            applyStandardStyle()
             setSelectionMode(Grid.SelectionMode.MULTI)
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
             

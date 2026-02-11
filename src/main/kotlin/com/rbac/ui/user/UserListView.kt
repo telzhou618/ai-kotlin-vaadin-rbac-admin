@@ -7,10 +7,7 @@ import com.rbac.dto.UserDto
 import com.rbac.dto.UserQueryDto
 import com.rbac.service.SysUserService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.PaginationComponent
-import com.rbac.ui.component.badgeStyle
-import com.rbac.ui.component.showConfirmDialog
-import com.rbac.ui.component.toolbarStyle
+import com.rbac.ui.component.*
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
@@ -34,8 +31,7 @@ class UserListView(
     private lateinit var pagination: PaginationComponent
 
     init {
-        setSizeFull()
-        isPadding = true
+        pageContainerStyle()
         
         h4("用户管理")
         createToolbar()
@@ -53,7 +49,7 @@ class UserListView(
             toolbarStyle()
             
             horizontalLayout {
-                alignItems = FlexComponent.Alignment.END
+                searchAreaStyle()
                 searchField = textField("搜索") {
                     placeholder = "输入用户名搜索"
                     width = "300px"
@@ -74,7 +70,7 @@ class UserListView(
 
     private fun createGrid() {
         grid = grid {
-            setSizeFull()
+            applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
             columnFor(UserDto::id) {
@@ -92,6 +88,7 @@ class UserListView(
             }.apply {
                 setHeader("状态")
                 width = "100px"
+                textCenter()
             }
 
             addComponentColumn { user ->

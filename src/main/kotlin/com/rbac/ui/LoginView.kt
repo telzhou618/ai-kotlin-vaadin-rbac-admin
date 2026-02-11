@@ -3,7 +3,9 @@ package com.rbac.ui
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.ThemeService
-
+import com.rbac.ui.component.dialogContentStyle
+import com.rbac.ui.component.loginContainerStyle
+import com.rbac.ui.component.loginTitleStyle
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.util.showError
 import com.rbac.util.showSuccess
@@ -41,20 +43,24 @@ class LoginView(
         setSizeFull()
         justifyContentMode = FlexComponent.JustifyContentMode.CENTER
         alignItems = FlexComponent.Alignment.CENTER
+        element.style.set("background", "var(--lumo-contrast-5pct)")
         
         verticalLayout {
-            width = "400px"
-            isPadding = true
+            width = "420px"
+            isPadding = false
+            loginContainerStyle()
             
             horizontalLayout {
                 width = "100%"
                 justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
                 alignItems = FlexComponent.Alignment.CENTER
                 
-                h2("权限管理系统")
+                h2("权限管理系统") {
+                    loginTitleStyle()
+                }
                 
                 button {
-                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON)
                     icon = if (themeService.isDarkTheme()) {
                         VaadinIcon.SUN_O.create()
                     } else {
@@ -73,22 +79,24 @@ class LoginView(
             }
             
             verticalLayout {
-                isPadding = false
-                isSpacing = true
+                dialogContentStyle()
                 
                 usernameField = textField("用户名") {
                     width = "100%"
                     placeholder = "请输入用户名"
+                    prefixComponent = VaadinIcon.USER.create()
                 }
                 
                 passwordField = passwordField("密码") {
                     width = "100%"
                     placeholder = "请输入密码"
+                    prefixComponent = VaadinIcon.LOCK.create()
                 }
                 
                 button("登录") {
                     width = "100%"
-                    addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                    addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE)
+                    icon = VaadinIcon.SIGN_IN.create()
                     onLeftClick { handleLogin() }
                 }
             }

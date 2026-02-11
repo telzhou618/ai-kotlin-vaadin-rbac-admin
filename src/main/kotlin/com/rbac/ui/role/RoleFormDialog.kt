@@ -4,10 +4,11 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
-
+import com.rbac.ui.component.dialogContentStyle
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.Binder
@@ -41,15 +42,16 @@ class RoleFormDialog(
         }
         
         verticalLayout {
-            isPadding = false
-            isSpacing = true
+            dialogContentStyle()
             
             roleCodeField = textField("角色编码") {
                 width = "100%"
+                prefixComponent = VaadinIcon.CODE.create()
             }
             
             roleNameField = textField("角色名称") {
                 width = "100%"
+                prefixComponent = VaadinIcon.TAG.create()
             }
             
             roleDescField = textArea("角色描述") {
@@ -63,10 +65,12 @@ class RoleFormDialog(
         footer.add(
             button("取消") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
             button("保存") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.CHECK.create()
                 onLeftClick { handleSave() }
             }
         )

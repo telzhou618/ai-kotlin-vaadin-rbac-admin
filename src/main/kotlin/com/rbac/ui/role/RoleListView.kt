@@ -33,7 +33,9 @@ class RoleListView(
     init {
         pageContainerStyle()
         
-        h4("角色管理")
+        h4("角色管理") {
+            pageTitleStyle()
+        }
         createToolbar()
         createGrid()
         createPagination()
@@ -85,16 +87,22 @@ class RoleListView(
             
             addComponentColumn { role ->
                 horizontalLayout {
+                    isSpacing = true
+                    element.style.set("gap", "var(--lumo-space-xs)")
+                    
                     button("编辑") {
-                        addThemeVariants(ButtonVariant.LUMO_SMALL)
+                        addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY)
+                        icon = VaadinIcon.EDIT.create()
                         onLeftClick { showFormDialog(role) }
                     }
                     button("分配权限") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_SUCCESS)
+                        icon = VaadinIcon.KEY.create()
                         onLeftClick { showAssignDialog(role) }
                     }
                     button("删除") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR)
+                        icon = VaadinIcon.TRASH.create()
                         onLeftClick { handleDelete(role.id!!) }
                     }
                 }

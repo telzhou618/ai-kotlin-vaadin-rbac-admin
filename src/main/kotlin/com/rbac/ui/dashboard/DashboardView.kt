@@ -79,8 +79,9 @@ class DashboardView(
         colorTheme: String
     ): Div {
         return Div().apply {
-            cardStyle()
+            cardHoverStyle()
             width = "25%"
+            element.style.set("cursor", "default")
 
             val content = VerticalLayout().apply {
                 isPadding = false
@@ -97,19 +98,23 @@ class DashboardView(
                 })
 
                 add(icon.create().apply {
-                    addClassNames(LumoUtility.IconSize.MEDIUM)
-                    element.style.set("color", when (colorTheme) {
-                        "primary" -> "var(--lumo-primary-color)"
-                        "success" -> "var(--lumo-success-color)"
-                        "error" -> "var(--lumo-error-color)"
-                        else -> "var(--lumo-contrast-60pct)"
-                    })
+                    addClassNames(LumoUtility.IconSize.LARGE)
+                    element.style.apply {
+                        set("color", when (colorTheme) {
+                            "primary" -> "var(--lumo-primary-color)"
+                            "success" -> "var(--lumo-success-color)"
+                            "error" -> "var(--lumo-error-color)"
+                            else -> "var(--lumo-contrast-60pct)"
+                        })
+                        set("opacity", "0.8")
+                    }
                 })
             }
 
             content.add(headerLayout)
             content.add(H2(value).apply {
                 addClassNames(LumoUtility.Margin.Top.SMALL, LumoUtility.Margin.Bottom.NONE)
+                element.style.set("color", "var(--lumo-header-text-color)")
             })
 
             add(content)

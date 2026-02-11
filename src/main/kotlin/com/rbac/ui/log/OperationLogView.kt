@@ -43,7 +43,9 @@ class OperationLogView(
     init {
         pageContainerStyle()
         
-        h4("日志管理")
+        h4("操作日志") {
+            pageTitleStyle()
+        }
         createToolbar()
         createGrid()
         createPagination()

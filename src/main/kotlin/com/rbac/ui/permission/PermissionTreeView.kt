@@ -28,7 +28,9 @@ class PermissionTreeView(
     init {
         pageContainerStyle()
         
-        h4("权限管理")
+        h4("权限管理") {
+            pageTitleStyle()
+        }
         createToolbar()
         createTreeGrid()
         loadData()
@@ -68,16 +70,22 @@ class PermissionTreeView(
             
             addComponentColumn { perm ->
                 horizontalLayout {
+                    isSpacing = true
+                    element.style.set("gap", "var(--lumo-space-xs)")
+                    
                     button("新增子权限") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_SUCCESS)
+                        icon = VaadinIcon.PLUS_CIRCLE.create()
                         onLeftClick { showFormDialog(null, perm.id!!) }
                     }
                     button("编辑") {
-                        addThemeVariants(ButtonVariant.LUMO_SMALL)
+                        addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY)
+                        icon = VaadinIcon.EDIT.create()
                         onLeftClick { showFormDialog(perm, perm.parentId) }
                     }
                     button("删除") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR)
+                        icon = VaadinIcon.TRASH.create()
                         onLeftClick { handleDelete(perm.id!!) }
                     }
                 }

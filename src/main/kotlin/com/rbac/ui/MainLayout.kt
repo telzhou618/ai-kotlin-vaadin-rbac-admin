@@ -44,21 +44,33 @@ class MainLayout(
             width = "100%"
             isPadding = true
             alignItems = FlexComponent.Alignment.CENTER
+            element.style.apply {
+                set("background", "var(--lumo-base-color)")
+                set("box-shadow", "var(--lumo-box-shadow-xs)")
+                set("border-bottom", "1px solid var(--lumo-contrast-10pct)")
+            }
 
             add(DrawerToggle())
 
             add(Span("权限管理系统").apply {
                 addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
+                element.style.set("color", "var(--lumo-primary-text-color)")
             })
 
             add(Span().apply {
                 element.style.set("flex-grow", "1")
             })
 
-            add(Span("$username, 欢迎你！"))
+            add(Span(username).apply {
+                addClassNames(LumoUtility.FontSize.MEDIUM)
+                element.style.apply {
+                    set("color", "var(--lumo-secondary-text-color)")
+                    set("margin-right", "var(--lumo-space-s)")
+                }
+            })
 
             add(Button().apply {
-                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON)
                 icon = if (themeService.isDarkTheme()) {
                     VaadinIcon.SUN_O.create()
                 } else {

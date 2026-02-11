@@ -61,10 +61,12 @@ class RoleAssignFormDialog(
         footer.add(
             button("取消") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
             button("保存") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.CHECK.create()
                 onLeftClick { handleSave() }
             }
         )
@@ -74,7 +76,10 @@ class RoleAssignFormDialog(
         width = "100%"
         isPadding = true
         isSpacing = true
-        element.style.set("border-bottom", "1px solid #e0e0e0")
+        element.style.apply {
+            set("border-bottom", "1px solid var(--lumo-contrast-10pct)")
+            set("background", "var(--lumo-contrast-5pct)")
+        }
         
         searchField = textField {
             placeholder = "搜索权限名称或编码"

@@ -33,7 +33,9 @@ class UserListView(
     init {
         pageContainerStyle()
         
-        h4("用户管理")
+        h4("用户管理") {
+            pageTitleStyle()
+        }
         createToolbar()
         createGrid()
         createPagination()
@@ -93,8 +95,12 @@ class UserListView(
 
             addComponentColumn { user ->
                 horizontalLayout {
+                    isSpacing = true
+                    element.style.set("gap", "var(--lumo-space-xs)")
+                    
                     button("编辑") {
-                        addThemeVariants(ButtonVariant.LUMO_SMALL)
+                        addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY)
+                        icon = VaadinIcon.EDIT.create()
                         onLeftClick { showFormDialog(user) }
                     }
 
@@ -103,11 +109,13 @@ class UserListView(
                             ButtonVariant.LUMO_SMALL,
                             if (user.status == 1) ButtonVariant.LUMO_CONTRAST else ButtonVariant.LUMO_SUCCESS
                         )
+                        icon = if (user.status == 1) VaadinIcon.BAN.create() else VaadinIcon.CHECK_CIRCLE.create()
                         onLeftClick { handleToggleStatus(user.id!!, if (user.status == 1) 0 else 1) }
                     }
 
                     button("删除") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR)
+                        icon = VaadinIcon.TRASH.create()
                         onLeftClick { handleDelete(user.id!!) }
                     }
                 }

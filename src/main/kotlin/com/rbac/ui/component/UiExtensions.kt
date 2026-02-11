@@ -20,6 +20,7 @@ fun HasStyle.toolbarStyle() {
         set("background", "var(--lumo-contrast-5pct)")
         set("border-radius", "var(--lumo-border-radius-m)")
         set("box-shadow", "var(--lumo-box-shadow-xs)")
+        set("margin-bottom", "var(--lumo-space-m)")
     }
 }
 
@@ -32,7 +33,17 @@ fun HasStyle.cardStyle() {
         set("border-radius", "var(--lumo-border-radius-m)")
         set("padding", "var(--lumo-space-l)")
         set("box-shadow", "var(--lumo-box-shadow-xs)")
+        set("transition", "box-shadow 0.2s, transform 0.2s")
     }
+}
+
+/**
+ * 设置卡片悬停效果
+ */
+fun HasStyle.cardHoverStyle() {
+    cardStyle()
+    element.setAttribute("onmouseover", "this.style.boxShadow='var(--lumo-box-shadow-s)'; this.style.transform='translateY(-2px)'")
+    element.setAttribute("onmouseout", "this.style.boxShadow='var(--lumo-box-shadow-xs)'; this.style.transform='translateY(0)'")
 }
 
 /**
@@ -43,6 +54,18 @@ fun HasStyle.formContainerStyle() {
         set("background", "var(--lumo-base-color)")
         set("border-radius", "var(--lumo-border-radius-m)")
         set("padding", "var(--lumo-space-m)")
+    }
+}
+
+/**
+ * 设置内容区域样式
+ */
+fun HasStyle.contentAreaStyle() {
+    element.style.apply {
+        set("background", "var(--lumo-base-color)")
+        set("border-radius", "var(--lumo-border-radius-m)")
+        set("padding", "var(--lumo-space-m)")
+        set("box-shadow", "var(--lumo-box-shadow-xs)")
     }
 }
 
@@ -94,6 +117,20 @@ fun VerticalLayout.pageContainerStyle() {
     isSpacing = true
     element.style.apply {
         set("background", "var(--lumo-base-color)")
+        set("gap", "var(--lumo-space-m)")
+    }
+}
+
+/**
+ * 设置页面标题样式
+ */
+fun HasStyle.pageTitleStyle() {
+    element.style.apply {
+        set("margin", "0")
+        set("padding", "var(--lumo-space-s) 0")
+        set("color", "var(--lumo-header-text-color)")
+        set("font-size", "var(--lumo-font-size-xxl)")
+        set("font-weight", "600")
     }
 }
 
@@ -103,6 +140,7 @@ fun VerticalLayout.pageContainerStyle() {
 fun HorizontalLayout.searchAreaStyle() {
     alignItems = FlexComponent.Alignment.END
     isSpacing = true
+    element.style.set("gap", "var(--lumo-space-s)")
 }
 
 /**
@@ -111,6 +149,7 @@ fun HorizontalLayout.searchAreaStyle() {
 fun HorizontalLayout.actionAreaStyle() {
     isSpacing = true
     justifyContentMode = FlexComponent.JustifyContentMode.END
+    element.style.set("gap", "var(--lumo-space-s)")
 }
 
 // ==================== Grid 样式 ====================
@@ -123,6 +162,20 @@ fun <T> Grid<T>.applyStandardStyle() {
     element.style.apply {
         set("border-radius", "var(--lumo-border-radius-m)")
         set("overflow", "hidden")
+        set("box-shadow", "var(--lumo-box-shadow-xs)")
+        set("background", "var(--lumo-base-color)")
+    }
+}
+
+/**
+ * 设置 Grid 容器样式
+ */
+fun HasStyle.gridContainerStyle() {
+    element.style.apply {
+        set("flex", "1")
+        set("min-height", "0")
+        set("display", "flex")
+        set("flex-direction", "column")
     }
 }
 
@@ -177,4 +230,43 @@ fun HasStyle.textRight() {
  */
 fun HasStyle.textLeft() {
     element.style.set("text-align", "left")
+}
+
+// ==================== 对话框样式 ====================
+
+/**
+ * 设置对话框内容样式
+ */
+fun VerticalLayout.dialogContentStyle() {
+    isPadding = false
+    isSpacing = true
+    element.style.apply {
+        set("gap", "var(--lumo-space-m)")
+        set("padding", "var(--lumo-space-m)")
+    }
+}
+
+/**
+ * 设置登录容器样式
+ */
+fun HasStyle.loginContainerStyle() {
+    element.style.apply {
+        set("background", "var(--lumo-base-color)")
+        set("border-radius", "var(--lumo-border-radius-l)")
+        set("padding", "var(--lumo-space-xl)")
+        set("box-shadow", "var(--lumo-box-shadow-m)")
+        set("border", "1px solid var(--lumo-contrast-10pct)")
+    }
+}
+
+/**
+ * 设置页面标题样式（H2）
+ */
+fun HasStyle.loginTitleStyle() {
+    element.style.apply {
+        set("margin", "0 0 var(--lumo-space-l) 0")
+        set("color", "var(--lumo-header-text-color)")
+        set("font-size", "var(--lumo-font-size-xxl)")
+        set("font-weight", "600")
+    }
 }

@@ -3,10 +3,11 @@ package com.rbac.ui.permission
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
-
+import com.rbac.ui.component.dialogContentStyle
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.validator.StringLengthValidator
@@ -34,21 +35,23 @@ class PermissionFormDialog(
         val parentPermCode = if (parentId == 0L) "" else parentPerm?.permCode ?: ""
         
         verticalLayout {
-            isPadding = false
-            isSpacing = true
+            dialogContentStyle()
             
             parentPermField = textField("父级权限") {
                 width = "100%"
                 value = "$parentPermName($parentPermCode)"
                 isReadOnly = true
+                prefixComponent = VaadinIcon.FOLDER_OPEN.create()
             }
 
             permCodeField = textField("权限编码") {
                 width = "100%"
+                prefixComponent = VaadinIcon.CODE.create()
             }
 
             permNameField = textField("权限名称") {
                 width = "100%"
+                prefixComponent = VaadinIcon.TAG.create()
             }
         }
 
@@ -58,10 +61,12 @@ class PermissionFormDialog(
         footer.add(
             button("取消") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
             button("保存") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.CHECK.create()
                 onLeftClick { handleSave() }
             }
         )

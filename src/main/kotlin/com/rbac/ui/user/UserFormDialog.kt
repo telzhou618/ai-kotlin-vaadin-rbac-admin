@@ -4,11 +4,12 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.UserDto
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
-
+import com.rbac.ui.component.dialogContentStyle
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.textfield.TextField
@@ -37,16 +38,17 @@ class UserFormDialog(
         val dto = user ?: UserDto(status = 1, roleIds = emptyList())
         
         verticalLayout {
-            isPadding = false
-            isSpacing = true
+            dialogContentStyle()
             
             usernameField = textField("用户名") {
                 width = "100%"
+                prefixComponent = VaadinIcon.USER.create()
             }
             
             passwordField = passwordField("密码") {
                 width = "100%"
                 placeholder = if (user == null) "请输入密码" else "留空则不修改"
+                prefixComponent = VaadinIcon.LOCK.create()
             }
             
             statusSelect = select("状态") {
@@ -72,10 +74,12 @@ class UserFormDialog(
         footer.add(
             button("取消") {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
             button("保存") {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                icon = VaadinIcon.CHECK.create()
                 onLeftClick { handleSave() }
             }
         )

@@ -12,7 +12,7 @@ class ConfirmDialog(
 ) : Dialog() {
 
     init {
-        headerTitle = "确认?"
+        headerTitle = "确认"
         minWidth = "300px"
 
         horizontalLayout {

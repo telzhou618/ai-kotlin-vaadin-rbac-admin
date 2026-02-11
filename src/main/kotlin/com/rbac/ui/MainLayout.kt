@@ -9,7 +9,7 @@ import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
 import com.rbac.ui.role.RoleListView
 import com.rbac.ui.user.UserListView
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showSuccess
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
@@ -111,7 +111,7 @@ class MainLayout(
 
     private fun handleLogout() {
         authService.logout()
-        NotifyUtil.showSuccess("退出成功")
+        showSuccess("退出成功")
         UI.getCurrent().navigate(LoginView::class.java)
     }
 }

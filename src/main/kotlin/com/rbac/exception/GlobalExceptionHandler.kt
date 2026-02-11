@@ -1,6 +1,6 @@
 package com.rbac.exception
 
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showError
 import com.vaadin.flow.server.ErrorEvent
 import com.vaadin.flow.server.ErrorHandler
 import org.slf4j.LoggerFactory
@@ -16,12 +16,12 @@ class GlobalExceptionHandler : ErrorHandler {
         logger.error("系统异常", throwable)
 
         val message = throwable.message ?: "系统异常，请联系管理员"
-        NotifyUtil.showError(message)
+        showError(message)
     }
 
     fun handle(e: Exception) {
         logger.error("系统异常", e)
-        NotifyUtil.showError(e.message ?: "系统异常，请联系管理员")
+        showError(e.message ?: "系统异常，请联系管理员")
     }
 }
 

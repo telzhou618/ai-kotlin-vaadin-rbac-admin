@@ -11,7 +11,7 @@ import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.badgeStyle
 import com.rbac.ui.component.showConfirmDialog
 import com.rbac.ui.component.toolbarStyle
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
@@ -144,7 +144,7 @@ class UserListView(
     private fun handleDelete(id: Long) {
         showConfirmDialog("确定要删除该用户吗？") {
             userService.deleteUser(id)
-            NotifyUtil.showSuccess("删除成功")
+            showSuccess("删除成功")
             loadData(1, 20)
         }
     }
@@ -153,7 +153,7 @@ class UserListView(
         val action = if (newStatus == 1) "启用" else "禁用"
         showConfirmDialog("确定要${action}该用户吗？") {
             userService.toggleUserStatus(id, newStatus)
-            NotifyUtil.showSuccess("${action}成功")
+            showSuccess("${action}成功")
             loadData(pagination.currentPage, 10)
         }
     }

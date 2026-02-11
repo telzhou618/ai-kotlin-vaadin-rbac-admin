@@ -12,7 +12,8 @@ import com.rbac.ui.MainLayout
 import com.rbac.ui.component.PaginationComponent
 import com.rbac.ui.component.toolbarStyle
 import com.rbac.util.ExcelUtil
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showError
+import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.grid.Grid
@@ -143,7 +144,7 @@ class OperationLogView(
             val records = pageData.records
             
             if (records.isEmpty()) {
-                NotifyUtil.showError("没有数据可导出")
+                showError("没有数据可导出")
                 return
             }
             
@@ -165,10 +166,10 @@ class OperationLogView(
             val fileName = "操作日志_${timestamp}.xlsx"
 
             ExcelUtil.exportExcel(fileName, OperationLogExportDto::class.java, exportData)
-            NotifyUtil.showSuccess("导出成功，共 ${records.size} 条记录")
+            showSuccess("导出成功，共 ${records.size} 条记录")
 
         }.onFailure { e ->
-            NotifyUtil.showError("导出失败：${e.message}")
+            showError("导出失败：${e.message}")
         }
     }
     

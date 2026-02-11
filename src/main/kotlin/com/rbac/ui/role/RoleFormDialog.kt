@@ -5,7 +5,7 @@ import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
 
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.textfield.TextArea
@@ -98,7 +98,7 @@ class RoleFormDialog(
                 roleService.updateRole(dto)
             }
             
-            NotifyUtil.showSuccess("保存成功")
+            showSuccess("保存成功")
             close()
             onSuccess()
         }

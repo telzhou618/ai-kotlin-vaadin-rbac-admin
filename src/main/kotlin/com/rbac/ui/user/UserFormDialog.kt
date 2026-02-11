@@ -5,7 +5,7 @@ import com.rbac.dto.UserDto
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
 
-import com.rbac.util.NotifyUtil
+import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.dialog.Dialog
@@ -127,7 +127,7 @@ class UserFormDialog(
                 userService.updateUser(dto)
             }
             
-            NotifyUtil.showSuccess("保存成功")
+            showSuccess("保存成功")
             close()
             onSuccess()
         }

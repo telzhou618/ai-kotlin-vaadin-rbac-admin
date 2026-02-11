@@ -33,9 +33,6 @@ class UserListView(
     init {
         pageContainerStyle()
         
-        h4("用户管理") {
-            pageTitleStyle()
-        }
         createToolbar()
         createGrid()
         createPagination()
@@ -47,25 +44,29 @@ class UserListView(
             width = "100%"
             isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
-            alignItems = FlexComponent.Alignment.END
+            alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
+            
+            h4("用户管理") {
+                pageTitleStyle()
+            }
             
             horizontalLayout {
                 searchAreaStyle()
-                searchField = textField("搜索") {
+                searchField = textField {
                     placeholder = "输入用户名搜索"
-                    width = "300px"
+                    width = "250px"
+                    isClearButtonVisible = true
                 }
                 button("查询") {
                     icon = VaadinIcon.SEARCH.create()
                     onLeftClick { loadData(1, 20) }
                 }
-            }
-            
-            button("新增") {
-                addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                icon = VaadinIcon.PLUS.create()
-                onLeftClick { showFormDialog(null) }
+                button("新增") {
+                    addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+                    icon = VaadinIcon.PLUS.create()
+                    onLeftClick { showFormDialog(null) }
+                }
             }
         }
     }

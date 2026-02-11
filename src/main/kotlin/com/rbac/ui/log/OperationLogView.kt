@@ -2,6 +2,7 @@ package com.rbac.ui.log
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.kaributools.placeholder
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.config.DateFormatConfig
 import com.rbac.dto.LogQueryDto
@@ -43,9 +44,6 @@ class OperationLogView(
     init {
         pageContainerStyle()
         
-        h4("操作日志") {
-            pageTitleStyle()
-        }
         createToolbar()
         createGrid()
         createPagination()
@@ -57,40 +55,48 @@ class OperationLogView(
             width = "100%"
             isPadding = true
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
-            alignItems = FlexComponent.Alignment.END
+            alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
+            
+            h4("操作日志") {
+                pageTitleStyle()
+            }
             
             horizontalLayout {
                 searchAreaStyle()
                 
-                usernameField = textField("用户名") {
-                    placeholder = "输入用户名"
-                    width = "150px"
+                usernameField = textField {
+                    placeholder = "用户名"
+                    width = "120px"
+                    isClearButtonVisible = true
                 }
 
-                moduleField = textField("模块") {
-                    placeholder = "输入模块"
-                    width = "150px"
+                moduleField = textField {
+                    placeholder = "模块"
+                    width = "120px"
+                    isClearButtonVisible = true
                 }
 
-                startDatePicker = datePicker("开始日期") {
-                    width = "150px"
+                startDatePicker = datePicker {
+                    placeholder = "开始日期"
+                    width = "140px"
                 }
 
-                endDatePicker = datePicker("结束日期") {
-                    width = "150px"
+                endDatePicker = datePicker {
+                    placeholder = "结束日期"
+                    width = "140px"
                 }
 
                 button("查询") {
                     icon = VaadinIcon.SEARCH.create()
                     onLeftClick { loadData(1, 20) }
                 }
-            }
-
-            button("导出") {
-                addThemeVariants(ButtonVariant.LUMO_SUCCESS)
-                icon = VaadinIcon.DOWNLOAD.create()
-                onLeftClick { exportToExcel() }
+                
+                button("导出") {
+                    addThemeVariants(ButtonVariant.LUMO_SUCCESS)
+                    icon = VaadinIcon.DOWNLOAD.create()
+                    onLeftClick { exportToExcel() }
+                }
             }
         }
     }

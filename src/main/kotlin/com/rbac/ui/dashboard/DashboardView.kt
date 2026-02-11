@@ -1,16 +1,20 @@
 package com.rbac.ui.dashboard
 
-import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.karibudsl.v10.columnFor
+import com.github.mvysny.karibudsl.v10.grid
+import com.github.mvysny.karibudsl.v10.h4
+import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.rbac.config.DateFormatConfig
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.*
+import com.rbac.ui.component.applyStandardStyle
+import com.rbac.ui.component.cardHoverStyle
+import com.rbac.ui.component.pageContainerStyle
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H2
-import com.vaadin.flow.component.html.H3
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -37,7 +41,6 @@ class DashboardView(
         horizontalLayout {
             width = "100%"
             isSpacing = true
-            marginBottom("l")
 
             add(createStatCard("用户总数", data.userCount.toString(), VaadinIcon.USER, "primary"))
             add(createStatCard("角色总数", data.roleCount.toString(), VaadinIcon.GROUP, "success"))
@@ -52,7 +55,7 @@ class DashboardView(
         grid<SysOperationLog> {
             applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
-            
+
             columnFor(SysOperationLog::username) { setHeader("用户").isAutoWidth = true }
             columnFor(SysOperationLog::module) { setHeader("模块").isAutoWidth = true }
             columnFor(SysOperationLog::operation) { setHeader("操作").isAutoWidth = true }
@@ -60,7 +63,7 @@ class DashboardView(
             columnFor(SysOperationLog::responseMsg) { setHeader("响应消息").isAutoWidth = true }
             columnFor(SysOperationLog::ip) { setHeader("IP").isAutoWidth = true }
             columnFor(SysOperationLog::executeTime) { setHeader("耗时(ms)").isAutoWidth = true }
-            
+
             addColumn { log ->
                 DateFormatConfig.formatDateTime(log.createTime)
             }.apply {
@@ -100,12 +103,14 @@ class DashboardView(
                 add(icon.create().apply {
                     addClassNames(LumoUtility.IconSize.LARGE)
                     element.style.apply {
-                        set("color", when (colorTheme) {
-                            "primary" -> "var(--lumo-primary-color)"
-                            "success" -> "var(--lumo-success-color)"
-                            "error" -> "var(--lumo-error-color)"
-                            else -> "var(--lumo-contrast-60pct)"
-                        })
+                        set(
+                            "color", when (colorTheme) {
+                                "primary" -> "var(--lumo-primary-color)"
+                                "success" -> "var(--lumo-success-color)"
+                                "error" -> "var(--lumo-error-color)"
+                                else -> "var(--lumo-contrast-60pct)"
+                            }
+                        )
                         set("opacity", "0.8")
                     }
                 })

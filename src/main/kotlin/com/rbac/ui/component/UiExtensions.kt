@@ -20,7 +20,7 @@ fun HasStyle.toolbarStyle() {
         set("background", "var(--lumo-contrast-5pct)")
         set("border-radius", "var(--lumo-border-radius-m)")
         set("box-shadow", "var(--lumo-box-shadow-xs)")
-        set("margin-bottom", "var(--lumo-space-m)")
+        set("margin-bottom", "var(--lumo-space-s)")
     }
 }
 
@@ -114,10 +114,11 @@ fun HasStyle.primaryBadgeStyle() {
 fun VerticalLayout.pageContainerStyle() {
     setSizeFull()
     isPadding = true
-    isSpacing = true
+    isSpacing = false
     element.style.apply {
         set("background", "var(--lumo-base-color)")
-        set("gap", "var(--lumo-space-m)")
+        set("gap", "var(--lumo-space-s)")
+        set("padding", "var(--lumo-space-m)")
     }
 }
 
@@ -127,10 +128,11 @@ fun VerticalLayout.pageContainerStyle() {
 fun HasStyle.pageTitleStyle() {
     element.style.apply {
         set("margin", "0")
-        set("padding", "var(--lumo-space-s) 0")
+        set("padding", "0")
         set("color", "var(--lumo-header-text-color)")
-        set("font-size", "var(--lumo-font-size-xxl)")
+        set("font-size", "var(--lumo-font-size-xl)")
         set("font-weight", "600")
+        set("line-height", "1.2")
     }
 }
 

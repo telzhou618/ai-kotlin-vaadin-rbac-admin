@@ -13,6 +13,7 @@ import com.rbac.util.showSuccess
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
+import com.vaadin.flow.component.avatar.Avatar
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.Span
@@ -22,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.theme.lumo.LumoUtility
+import java.util.*
 
 class MainLayout(
     private val authService: AuthService,
@@ -61,11 +63,16 @@ class MainLayout(
                 element.style.set("flex-grow", "1")
             })
 
+            add(Avatar(username.uppercase(Locale.getDefault())).apply {
+                element.setAttribute("title", username)
+                element.style.set("margin-right", "var(--lumo-space-s)")
+            })
+
             add(Span(username).apply {
                 addClassNames(LumoUtility.FontSize.MEDIUM)
                 element.style.apply {
                     set("color", "var(--lumo-secondary-text-color)")
-                    set("margin-right", "var(--lumo-space-s)")
+                    set("margin-right", "var(--lumo-space-m)")
                 }
             })
 

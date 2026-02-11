@@ -113,4 +113,29 @@ class SysUserService(
         user.status = newStatus
         updateById(user)
     }
+    
+    /**
+     * 修改密码
+     */
+    @OperationLog(module = "用户管理", operation = "修改密码")
+    @Transactional
+    fun changePassword(userId: Long, oldPassword: String, newPassword: String) {
+        val user = getById(userId) ?: throw RuntimeException("用户不存在")
+        
+        // 验证原密码
+        val oldPasswordMd5 = DigestUtil.md5Hex(oldPassword)
+        if (user.password != oldPasswordMd5) {
+            throw RuntimeException("原密码错误")
+        }
+        
+        // 验证新密码不能与旧密码相同
+        val newPasswordMd5 = DigestUtil.md5Hex(newPassword)
+        if (user.password == newPasswordMd5) {
+            throw RuntimeException("新密码不能与旧密码相同")
+        }
+        
+        // 更新密码
+        user.password = newPasswordMd5
+        updateById(user)
+    }
 }

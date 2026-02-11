@@ -8,6 +8,7 @@ import com.rbac.ui.dashboard.DashboardView
 import com.rbac.ui.log.OperationLogView
 import com.rbac.ui.permission.PermissionTreeView
 import com.rbac.ui.role.RoleListView
+import com.rbac.ui.user.ChangePasswordDialog
 import com.rbac.ui.user.UserListView
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.UI
@@ -23,7 +24,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.theme.lumo.LumoUtility
-import java.util.*
 
 class MainLayout(
     private val authService: AuthService,
@@ -63,7 +63,7 @@ class MainLayout(
                 element.style.set("flex-grow", "1")
             })
 
-            add(Avatar(username.uppercase(Locale.getDefault())).apply {
+            add(Avatar(username).apply {
                 element.setAttribute("title", username)
                 element.style.set("margin-right", "var(--lumo-space-s)")
             })
@@ -74,6 +74,12 @@ class MainLayout(
                     set("color", "var(--lumo-secondary-text-color)")
                     set("margin-right", "var(--lumo-space-m)")
                 }
+            })
+
+            add(Button("修改密码").apply {
+                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                icon = VaadinIcon.PASSWORD.create()
+                addClickListener { showChangePasswordDialog() }
             })
 
             add(Button().apply {
@@ -132,5 +138,10 @@ class MainLayout(
         authService.logout()
         showSuccess("退出成功")
         UI.getCurrent().navigate(LoginView::class.java)
+    }
+
+    private fun showChangePasswordDialog() {
+        val userId = StpUtil.getLoginIdAsLong()
+        ChangePasswordDialog(userId, userService, authService).open()
     }
 }

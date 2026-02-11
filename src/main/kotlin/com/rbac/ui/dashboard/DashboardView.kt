@@ -68,7 +68,7 @@ class DashboardView(
                 isAutoWidth = true
             }
 
-            setItems(logService.getRecentLogs(15))
+            setItems(logService.getRecentLogs(10))
         }
     }
 

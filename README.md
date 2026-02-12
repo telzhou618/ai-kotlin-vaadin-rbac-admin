@@ -20,6 +20,16 @@
 - ✅ 首页仪表盘（数据统计、最近日志）
 - ✅ 主题切换（Lumo 明暗模式、会话持久化）
 
+## 项目截图
+
+![项目截图1](screenshots/img.png)
+
+![项目截图2](screenshots/img_1.png)
+
+![项目截图3](screenshots/img_2.png)
+
+![项目截图4](screenshots/img_3.png)
+
 ## 项目结构
 
 ```

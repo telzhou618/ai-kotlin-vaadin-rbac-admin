@@ -19,20 +19,17 @@ repositories {
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-aop")    // Development
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     // Vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter:24.3.0")
-
-    // Karibu DSL
     implementation("com.github.mvysny.karibudsl:karibu-dsl:2.1.2")
 
     // MyBatis-Plus
     implementation("com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5")
     // MySQL
     implementation("com.mysql:mysql-connector-j:8.2.0")
-    // 动态数据源
-    implementation("com.baomidou:dynamic-datasource-spring-boot-starter:4.2.0")
     // ShardingSphere
     implementation("org.apache.shardingsphere:shardingsphere-jdbc-core:5.4.0")
     // 连接池
@@ -55,9 +52,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    // Development
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 dependencyManagement {

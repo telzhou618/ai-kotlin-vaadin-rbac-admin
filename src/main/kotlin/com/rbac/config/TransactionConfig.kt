@@ -20,11 +20,4 @@ class TransactionConfig {
     ): PlatformTransactionManager {
         return DataSourceTransactionManager(dataSource)
     }
-
-    @Bean("shardingTransactionManager")
-    fun shardingTransactionManager(
-        @Qualifier("shardingDataSource") dataSource: DataSource
-    ): PlatformTransactionManager {
-        return DataSourceTransactionManager(dataSource)
-    }
 }

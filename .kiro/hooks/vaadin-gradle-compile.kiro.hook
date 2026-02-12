@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Vaadin Gradle 自动编译检查",
+  "description": "当 Kotlin 源代码文件被编辑后，自动执行 gradle 编译命令检查代码是否正确。使用中文回答问题，针对 Vaadin 24.3.0 + Karibu DSL 2.1.2 技术栈，不生成任何说明文档。",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/main/kotlin/**/*.kt"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "gradle compileKotlin"
+  }
+}

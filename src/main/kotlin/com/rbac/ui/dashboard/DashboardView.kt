@@ -4,7 +4,6 @@ import com.github.mvysny.karibudsl.v10.columnFor
 import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.h4
 import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.rbac.config.DateFormatConfig
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
@@ -12,6 +11,7 @@ import com.rbac.ui.MainLayout
 import com.rbac.ui.component.applyStandardStyle
 import com.rbac.ui.component.cardHoverStyle
 import com.rbac.ui.component.pageContainerStyle
+import com.rbac.util.formatDateTime
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H2
@@ -65,7 +65,7 @@ class DashboardView(
             columnFor(SysOperationLog::executeTime) { setHeader("耗时(ms)").isAutoWidth = true }
 
             addColumn { log ->
-                DateFormatConfig.formatDateTime(log.createTime)
+                log.createTime.formatDateTime()
             }.apply {
                 setHeader("操作时间")
                 isAutoWidth = true

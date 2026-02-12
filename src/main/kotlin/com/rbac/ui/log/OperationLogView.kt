@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.placeholder
 import com.rbac.annotation.RequiresPermissions
-import com.rbac.config.DateFormatConfig
 import com.rbac.dto.LogQueryDto
 import com.rbac.dto.OperationLogExportDto
 import com.rbac.entity.SysOperationLog
@@ -12,6 +11,7 @@ import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.*
 import com.rbac.util.ExcelUtil
+import com.rbac.util.formatDateTime
 import com.rbac.util.showError
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
@@ -120,7 +120,7 @@ class OperationLogView(
             columnFor(SysOperationLog::executeTime) { setHeader("耗时(ms)") }
 
             addColumn { log ->
-                DateFormatConfig.formatDateTime(log.createTime)
+                log.createTime.formatDateTime()
             }.apply {
                 setHeader("操作时间")
                 width = "180px"
@@ -164,7 +164,7 @@ class OperationLogView(
                     responseMsg = log.responseMsg,
                     ip = log.ip,
                     executeTime = log.executeTime,
-                    createTime = DateFormatConfig.formatDateTime(log.createTime)
+                    createTime = log.createTime.formatDateTime()
                 )
             }
             

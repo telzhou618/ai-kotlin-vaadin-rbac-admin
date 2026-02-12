@@ -20,41 +20,27 @@ import java.time.format.DateTimeFormatter
  */
 @Configuration
 class DateFormatConfig {
-    
+
     companion object {
-        const val DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
-        const val DATE_PATTERN = "yyyy-MM-dd"
-        
+        private const val DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
+        private const val DATE_PATTERN = "yyyy-MM-dd"
+
         val DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)
         val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
-        
-        /**
-         * 格式化 LocalDateTime 为字符串
-         */
-        fun formatDateTime(dateTime: LocalDateTime?): String {
-            return dateTime?.format(DATE_TIME_FORMATTER) ?: ""
-        }
-        
-        /**
-         * 格式化 LocalDate 为字符串
-         */
-        fun formatDate(date: LocalDate?): String {
-            return date?.format(DATE_FORMATTER) ?: ""
-        }
     }
-    
+
     @Bean
     fun objectMapper(): ObjectMapper {
         val javaTimeModule = JavaTimeModule()
-        
+
         // LocalDateTime 序列化和反序列化
         javaTimeModule.addSerializer(LocalDateTime::class.java, LocalDateTimeSerializer(DATE_TIME_FORMATTER))
         javaTimeModule.addDeserializer(LocalDateTime::class.java, LocalDateTimeDeserializer(DATE_TIME_FORMATTER))
-        
+
         // LocalDate 序列化和反序列化
         javaTimeModule.addSerializer(LocalDate::class.java, LocalDateSerializer(DATE_FORMATTER))
         javaTimeModule.addDeserializer(LocalDate::class.java, LocalDateDeserializer(DATE_FORMATTER))
-        
+
         return Jackson2ObjectMapperBuilder.json()
             .modules(javaTimeModule)
             .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

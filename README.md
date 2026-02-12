@@ -84,23 +84,13 @@ gradlew.bat bootRun
 浏览器访问: http://localhost:8080
 
 **测试账号**:
+
 - 管理员: `admin/admin123` (所有权限)
 - 普通用户: `test/test123` (部分权限)
 
 ## 生产环境打包
 
-### 方法一：使用脚本（推荐）
-
-```bash
-# Windows
-build-prod.bat
-
-# Linux/Mac
-chmod +x build-prod.sh
-./build-prod.sh
-```
-
-### 方法二：使用 Gradle 命令
+### 方法一：使用 Gradle 命令
 
 ```bash
 # Windows
@@ -110,7 +100,7 @@ gradle clean build -Pvaadin.productionMode -x test
 ./gradlew clean build -Pvaadin.productionMode -x test
 ```
 
-### 方法三：在 IntelliJ IDEA 中
+### 方法二：在 IntelliJ IDEA 中
 
 1. 创建 Run Configuration
 2. 配置参数：`-Pvaadin.productionMode -x test`
@@ -181,8 +171,8 @@ if (StpUtil.hasPermission("system:user:delete")) {
 showConfirmDialog("确定删除？") { /* 确认操作 */ }
 
 // 通知提示
-NotificationUtil.showSuccess("操作成功")
-NotificationUtil.showError("操作失败")
+showSuccess("操作成功")
+showError("操作失败")
 
 // 分页组件
 val pagination = PaginationComponent { page, size -> loadData(page, size) }

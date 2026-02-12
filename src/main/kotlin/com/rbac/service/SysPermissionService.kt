@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.rbac.annotation.OperationLog
 import com.rbac.dto.PermissionDto
 import com.rbac.entity.SysPermission
+import com.rbac.exception.BusinessException
 import com.rbac.mapper.SysPermissionMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -44,7 +45,7 @@ class SysPermissionService : ServiceImpl<SysPermissionMapper, SysPermission>() {
     @OperationLog(module = "权限管理", operation = "修改")
     @Transactional
     fun updatePerm(dto: PermissionDto) {
-        val perm = getById(dto.id) ?: throw RuntimeException("权限不存在")
+        val perm = getById(dto.id) ?: throw BusinessException("权限不存在", BusinessException.PERMISSION_NOT_FOUND)
         perm.permCode = dto.permCode
         perm.permName = dto.permName
         perm.parentId = dto.parentId
@@ -56,7 +57,7 @@ class SysPermissionService : ServiceImpl<SysPermissionMapper, SysPermission>() {
     fun deletePerm(id: Long) {
         val count = count(QueryWrapper<SysPermission>().eq("parent_id", id))
         if (count > 0) {
-            throw RuntimeException("存在子权限，无法删除")
+            throw BusinessException("存在子权限，无法删除", BusinessException.OPERATION_FAILED)
         }
         removeById(id)
     }

@@ -6,6 +6,7 @@ import com.rbac.annotation.OperationLog
 import com.rbac.entity.SysOperationLog
 import com.rbac.service.SysOperationLogService
 import com.rbac.service.SysUserService
+import com.rbac.util.toJSONString
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -20,16 +21,16 @@ class OperationLogAspect(
     private val operationLogService: SysOperationLogService,
     private val userService: SysUserService
 ) {
-    
+
     private val logger = LoggerFactory.getLogger(OperationLogAspect::class.java)
-    
+
     @Around("@annotation(com.rbac.annotation.OperationLog)")
     fun around(joinPoint: ProceedingJoinPoint): Any? {
         val startTime = System.currentTimeMillis()
         val signature = joinPoint.signature as MethodSignature
         val targetMethod = signature.method
         val annotation = targetMethod.getAnnotation(OperationLog::class.java)
-        
+
         val log = SysOperationLog().apply {
             module = annotation.module
             operation = annotation.operation
@@ -40,13 +41,13 @@ class OperationLogAspect(
             userAgent = "Vaadin"
             createTime = LocalDateTime.now()
         }
-        
+
         // 获取当前登录用户信息
         try {
             if (StpUtil.isLogin()) {
                 val userId = StpUtil.getLoginIdAsLong()
                 log.userId = userId
-                
+
                 // 从数据库获取真实用户名
                 val user = userService.getById(userId)
                 log.username = user?.username ?: "未知用户"
@@ -54,7 +55,7 @@ class OperationLogAspect(
         } catch (e: Exception) {
             logger.warn("获取登录信息失败", e)
         }
-        
+
         var result: Any? = null
         try {
             result = joinPoint.proceed()
@@ -67,12 +68,13 @@ class OperationLogAspect(
         } finally {
             log.executeTime = System.currentTimeMillis() - startTime
             try {
+                logger.debug("请求日志: {}", log.toJSONString())
                 operationLogService.save(log)
             } catch (e: Exception) {
                 logger.error("保存操作日志失败", e)
             }
         }
-        
+
         return result
     }
 }

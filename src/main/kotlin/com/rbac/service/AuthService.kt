@@ -3,6 +3,7 @@ package com.rbac.service
 import cn.dev33.satoken.stp.StpUtil
 import cn.hutool.crypto.digest.DigestUtil
 import com.rbac.annotation.OperationLog
+import com.rbac.exception.BusinessException
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,7 +15,7 @@ class AuthService(
     fun login(username: String, password: String): Boolean {
         val user = userService.getUserByUsername(username) ?: return false
         if (user.status == 0) {
-            throw RuntimeException("用户已被禁用")
+            throw BusinessException("用户已被禁用", BusinessException.USER_DISABLED)
         }
         if (user.password != DigestUtil.md5Hex(password)) {
             return false

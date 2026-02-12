@@ -7,6 +7,7 @@ import com.rbac.annotation.OperationLog
 import com.rbac.dto.RoleDto
 import com.rbac.dto.RoleQueryDto
 import com.rbac.entity.SysRole
+import com.rbac.exception.BusinessException
 import com.rbac.mapper.SysRoleMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -49,7 +50,7 @@ class SysRoleService(
     @OperationLog(module = "角色管理", operation = "修改")
     @Transactional
     fun updateRole(dto: RoleDto) {
-        val role = getById(dto.id) ?: throw RuntimeException("角色不存在")
+        val role = getById(dto.id) ?: throw BusinessException("角色不存在", BusinessException.ROLE_NOT_FOUND)
         role.roleCode = dto.roleCode
         role.roleName = dto.roleName
         role.roleDesc = dto.roleDesc

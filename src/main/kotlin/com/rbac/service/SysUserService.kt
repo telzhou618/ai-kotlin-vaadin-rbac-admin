@@ -8,14 +8,17 @@ import com.rbac.annotation.OperationLog
 import com.rbac.dto.UserDto
 import com.rbac.dto.UserQueryDto
 import com.rbac.entity.SysUser
+import com.rbac.exception.BusinessException
 import com.rbac.mapper.SysUserMapper
+import org.checkerframework.checker.units.qual.t
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SysUserService(
     private val userRoleService: SysUserRoleService,
-    val roleService: SysRoleService
+    val roleService: SysRoleService,
+    private val sysPermissionService: SysPermissionService
 ) : ServiceImpl<SysUserMapper, SysUser>() {
 
     fun pageQuery(page: Page<SysUser>, query: UserQueryDto): Page<SysUser> {
@@ -52,7 +55,7 @@ class SysUserService(
     @OperationLog(module = "用户管理", operation = "修改")
     @Transactional
     fun updateUser(dto: UserDto) {
-        val user = getById(dto.id) ?: throw RuntimeException("用户不存在")
+        val user = getById(dto.id) ?: throw BusinessException("用户不存在", BusinessException.USER_NOT_FOUND)
         user.username = dto.username
         user.status = dto.status
         if (!dto.password.isNullOrBlank()) {
@@ -102,38 +105,38 @@ class SysUserService(
 
         return permissions.toList()
     }
-    
+
     /**
      * 切换用户状态（启用/禁用）
      */
     @OperationLog(module = "用户管理", operation = "切换状态")
     @Transactional
     fun toggleUserStatus(id: Long, newStatus: Int) {
-        val user = getById(id) ?: throw RuntimeException("用户不存在")
+        val user = getById(id) ?: throw BusinessException("用户不存在", BusinessException.USER_NOT_FOUND)
         user.status = newStatus
         updateById(user)
     }
-    
+
     /**
      * 修改密码
      */
     @OperationLog(module = "用户管理", operation = "修改密码")
     @Transactional
     fun changePassword(userId: Long, oldPassword: String, newPassword: String) {
-        val user = getById(userId) ?: throw RuntimeException("用户不存在")
-        
+        val user = getById(userId) ?: throw BusinessException("用户不存在", BusinessException.USER_NOT_FOUND)
+
         // 验证原密码
         val oldPasswordMd5 = DigestUtil.md5Hex(oldPassword)
         if (user.password != oldPasswordMd5) {
-            throw RuntimeException("原密码错误")
+            throw BusinessException("原密码错误", BusinessException.INVALID_PASSWORD)
         }
-        
+
         // 验证新密码不能与旧密码相同
         val newPasswordMd5 = DigestUtil.md5Hex(newPassword)
         if (user.password == newPasswordMd5) {
-            throw RuntimeException("新密码不能与旧密码相同")
+            throw BusinessException("新密码不能与旧密码相同", BusinessException.PASSWORD_SAME)
         }
-        
+
         // 更新密码
         user.password = newPasswordMd5
         updateById(user)

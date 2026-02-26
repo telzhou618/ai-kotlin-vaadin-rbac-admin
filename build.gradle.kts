@@ -1,11 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.2.1"
     id("io.spring.dependency-management") version "1.1.4"
     id("com.vaadin") version "24.3.0"
-    kotlin("jvm") version "1.9.21"
-    kotlin("plugin.spring") version "1.9.21"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
 }
 
 group = "com.rbac"
@@ -25,7 +26,7 @@ dependencies {
     // Vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter:24.3.0")
     implementation("com.github.mvysny.karibudsl:karibu-dsl:2.1.2")
-    implementation("com.github.mvysny.karibudsl:karibu-dsl-v23:2.1.2")  // vaadin 扩展
+    implementation("com.github.mvysny.karibudsl:karibu-dsl-v23:2.3.2")  // vaadin 扩展
 
     // MyBatis-Plus
     implementation("com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5")
@@ -68,12 +69,16 @@ vaadin {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

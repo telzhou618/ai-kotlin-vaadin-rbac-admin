@@ -73,7 +73,7 @@ class MainLayout(
                     VaadinIcon.MOON_O.create()
                 }
                 element.setAttribute("title", "切换主题")
-                addClickListener {
+                onLeftClick {
                     themeService.toggleTheme()
                     icon = if (themeService.isDarkTheme()) {
                         VaadinIcon.SUN_O.create()

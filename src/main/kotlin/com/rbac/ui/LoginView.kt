@@ -5,7 +5,6 @@ import com.rbac.service.AuthService
 import com.rbac.service.ThemeService
 import com.rbac.ui.component.dialogContentStyle
 import com.rbac.ui.component.loginContainerStyle
-import com.rbac.ui.component.loginTitleStyle
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.util.showError
 import com.rbac.util.showSuccess
@@ -31,43 +30,48 @@ class LoginView(
     private val authService: AuthService,
     private val themeService: ThemeService
 ) : VerticalLayout() {
-    
+
     private lateinit var usernameField: TextField
     private lateinit var passwordField: PasswordField
-    
+
     private val binder = Binder(LoginForm::class.java)
-    
+
     init {
         themeService.initTheme()
-        
+
         setSizeFull()
         justifyContentMode = FlexComponent.JustifyContentMode.CENTER
         alignItems = FlexComponent.Alignment.CENTER
         element.style.set("background", "var(--lumo-contrast-5pct)")
-        
+
         verticalLayout {
-            width = "420px"
+            width = "480px"
             isPadding = false
             loginContainerStyle()
-            
+
             horizontalLayout {
                 width = "100%"
-                justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
-                alignItems = FlexComponent.Alignment.CENTER
-                
+                content { align(center, middle) }
                 h2("权限管理系统") {
-                    loginTitleStyle()
+                    element.style.apply {
+                        set("color", "var(--lumo-header-text-color)")
+                        set("font-size", "var(--lumo-font-size-xxl)")
+                        set("font-weight", "600")
+                    }
                 }
-                
+
                 button {
-                    addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON)
+                    addThemeVariants(
+                        ButtonVariant.LUMO_TERTIARY,
+                        ButtonVariant.LUMO_ICON
+                    )
                     icon = if (themeService.isDarkTheme()) {
                         VaadinIcon.SUN_O.create()
                     } else {
                         VaadinIcon.MOON_O.create()
                     }
                     element.setAttribute("title", "切换主题")
-                    onLeftClick { 
+                    onLeftClick {
                         themeService.toggleTheme()
                         icon = if (themeService.isDarkTheme()) {
                             VaadinIcon.SUN_O.create()
@@ -77,22 +81,22 @@ class LoginView(
                     }
                 }
             }
-            
+
             verticalLayout {
                 dialogContentStyle()
-                
-                usernameField = textField("用户名") {
+
+                usernameField = textField() {
                     width = "100%"
                     placeholder = "请输入用户名"
                     prefixComponent = VaadinIcon.USER.create()
                 }
-                
-                passwordField = passwordField("密码") {
+
+                passwordField = passwordField() {
                     width = "100%"
                     placeholder = "请输入密码"
                     prefixComponent = VaadinIcon.LOCK.create()
                 }
-                
+
                 button("登录") {
                     width = "100%"
                     addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE)
@@ -101,28 +105,28 @@ class LoginView(
                 }
             }
         }
-        
+
         configureBinder()
         binder.readBean(LoginForm())
     }
-    
+
     private fun configureBinder() {
         binder.forField(usernameField)
             .asRequired("用户名不能为空")
             .bind(LoginForm::username.name)
-        
+
         binder.forField(passwordField)
             .asRequired("密码不能为空")
             .bind(LoginForm::password.name)
-        
+
         binder.readBean(LoginForm())
     }
-    
+
     private fun handleLogin() {
         if (binder.validate().isOk) {
             val form = LoginForm()
             binder.writeBean(form)
-            
+
             if (authService.login(form.username, form.password)) {
                 showSuccess("登录成功")
                 UI.getCurrent().navigate(DashboardView::class.java)

@@ -25,6 +25,7 @@ dependencies {
     // Vaadin
     implementation("com.vaadin:vaadin-spring-boot-starter:24.3.0")
     implementation("com.github.mvysny.karibudsl:karibu-dsl:2.1.2")
+    implementation("com.github.mvysny.karibudsl:karibu-dsl-v23:2.1.2")  // vaadin 扩展
 
     // MyBatis-Plus
     implementation("com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5")

@@ -1,6 +1,9 @@
 package com.rbac.ui
 
 import cn.dev33.satoken.stp.StpUtil
+import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.karibudsl.v23.route
+import com.github.mvysny.karibudsl.v23.sideNav
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.service.ThemeService
@@ -15,9 +18,6 @@ import com.rbac.util.showSuccess
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
-import com.vaadin.flow.component.applayout.DrawerToggle
-import com.vaadin.flow.component.avatar.Avatar
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.html.Span
@@ -27,8 +27,6 @@ import com.vaadin.flow.component.menubar.MenuBar
 import com.vaadin.flow.component.menubar.MenuBarVariant
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
-import com.vaadin.flow.component.sidenav.SideNav
-import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.theme.lumo.LumoUtility
 import java.util.*
 
@@ -58,20 +56,16 @@ class MainLayout(
                 set("box-shadow", "var(--lumo-box-shadow-xs)")
                 set("border-bottom", "1px solid var(--lumo-contrast-10pct)")
             }
-
-            add(DrawerToggle())
-
-            add(Span("权限管理系统").apply {
+            drawerToggle()
+            span("权限管理系统") {
                 addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.FontWeight.BOLD)
                 element.style.set("color", "var(--lumo-primary-text-color)")
-            })
-
-            add(Span().apply {
+            }
+            span {
                 element.style.set("flex-grow", "1")
-            })
-
+            }
             // 主题切换按钮
-            add(Button().apply {
+            button {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON)
                 icon = if (themeService.isDarkTheme()) {
                     VaadinIcon.SUN_O.create()
@@ -87,8 +81,7 @@ class MainLayout(
                         VaadinIcon.MOON_O.create()
                     }
                 }
-            })
-
+            }
             // 用户菜单
             add(createUserMenu(username))
         }
@@ -107,20 +100,17 @@ class MainLayout(
                 alignItems = FlexComponent.Alignment.CENTER
                 isSpacing = true
                 element.style.set("gap", "var(--lumo-space-s)")
-
-                add(Avatar(username.uppercase(Locale.getDefault())).apply {
+                avatar(username.uppercase(Locale.getDefault())) {
                     element.style.set("width", "32px")
                     element.style.set("height", "32px")
-                })
-
-                add(Span(username).apply {
+                }
+                span(username) {
                     addClassNames(LumoUtility.FontSize.MEDIUM)
-                })
-
-                add(Icon(VaadinIcon.CHEVRON_DOWN).apply {
+                }
+                icon(VaadinIcon.CHEVRON_DOWN) {
                     element.style.set("width", "var(--lumo-icon-size-s)")
                     element.style.set("height", "var(--lumo-icon-size-s)")
-                })
+                }
             }
         )
 
@@ -166,27 +156,23 @@ class MainLayout(
     }
 
     private fun createDrawer() {
-        val nav = SideNav().apply {
-            addItem(SideNavItem("首页", DashboardView::class.java, VaadinIcon.DASHBOARD.create()))
-
-            if (StpUtil.hasPermission("system:user:view")) {
-                addItem(SideNavItem("用户管理", UserListView::class.java, VaadinIcon.USER.create()))
-            }
-
-            if (StpUtil.hasPermission("system:role:view")) {
-                addItem(SideNavItem("角色管理", RoleListView::class.java, VaadinIcon.GROUP.create()))
-            }
-
-            if (StpUtil.hasPermission("system:permission:view")) {
-                addItem(SideNavItem("权限管理", PermissionTreeView::class.java, VaadinIcon.LOCK.create()))
-            }
-
-            if (StpUtil.hasPermission("system:log:view")) {
-                addItem(SideNavItem("操作日志", OperationLogView::class.java, VaadinIcon.RECORDS.create()))
+        drawer {
+            sideNav {
+                route(DashboardView::class, VaadinIcon.DASHBOARD, "首页")
+                if (StpUtil.hasPermission("system:user:view")) {
+                    route(UserListView::class, VaadinIcon.USER, "用户管理")
+                }
+                if (StpUtil.hasPermission("system:role:view")) {
+                    route(RoleListView::class, VaadinIcon.GROUP, "角色管理")
+                }
+                if (StpUtil.hasPermission("system:permission:view")) {
+                    route(PermissionTreeView::class, VaadinIcon.LOCK, "权限管理")
+                }
+                if (StpUtil.hasPermission("system:log:view")) {
+                    route(OperationLogView::class, VaadinIcon.RECORDS, "操作日志")
+                }
             }
         }
-
-        addToDrawer(nav)
     }
 
     private fun handleLogout() {

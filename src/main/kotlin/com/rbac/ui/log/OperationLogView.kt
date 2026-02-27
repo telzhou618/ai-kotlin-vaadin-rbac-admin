@@ -2,7 +2,6 @@ package com.rbac.ui.log
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.placeholder
 import com.rbac.annotation.RequiresPermissions
 import com.rbac.dto.LogQueryDto
 import com.rbac.dto.OperationLogExportDto
@@ -34,21 +33,20 @@ class OperationLogView(
     private val logService: SysOperationLogService
 ) : VerticalLayout() {
 
+    private val pageSize = 20
     private lateinit var usernameField: TextField
     private lateinit var moduleField: TextField
     private lateinit var startDatePicker: DatePicker
     private lateinit var endDatePicker: DatePicker
     private lateinit var grid: Grid<SysOperationLog>
-    private var pageSize = 20
     private lateinit var pagination: PaginationComponent
 
     init {
         pageContainerStyle()
-        
         createToolbar()
         createGrid()
         createPagination()
-        loadData(1, 20)
+        refresh()
     }
 
     private fun createToolbar() {
@@ -58,14 +56,12 @@ class OperationLogView(
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
-            
-            h4("操作日志") {
-                pageTitleStyle()
-            }
-            
+
+            h4("操作日志") { pageTitleStyle() }
+
             horizontalLayout {
                 searchAreaStyle()
-                
+
                 usernameField = textField {
                     placeholder = "用户名"
                     width = "120px"
@@ -88,14 +84,12 @@ class OperationLogView(
                     width = "140px"
                 }
 
-                button("查询") {
-                    icon = VaadinIcon.SEARCH.create()
-                    onLeftClick { loadData(1, 20) }
+                button("查询", VaadinIcon.SEARCH.create()) {
+                    onLeftClick { refresh() }
                 }
-                
-                button("导出") {
+
+                button("导出", VaadinIcon.DOWNLOAD.create()) {
                     addThemeVariants(ButtonVariant.LUMO_SUCCESS)
-                    icon = VaadinIcon.DOWNLOAD.create()
                     onLeftClick { exportToExcel() }
                 }
             }
@@ -106,12 +100,8 @@ class OperationLogView(
         grid = grid {
             applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
-            
-            columnFor(SysOperationLog::id) {
-                setHeader("ID")
-                width = "80px"
-                isSortable = true
-            }
+
+            columnFor(SysOperationLog::id) { setHeader("ID"); width = "80px"; isSortable = true }
             columnFor(SysOperationLog::username) { setHeader("用户") }
             columnFor(SysOperationLog::module) { setHeader("模块") }
             columnFor(SysOperationLog::operation) { setHeader("操作") }
@@ -119,10 +109,7 @@ class OperationLogView(
             columnFor(SysOperationLog::responseMsg) { setHeader("响应消息") }
             columnFor(SysOperationLog::ip) { setHeader("IP") }
             columnFor(SysOperationLog::executeTime) { setHeader("耗时(ms)") }
-
-            addColumn { log ->
-                log.createTime.formatDateTime()
-            }.apply {
+            columnFor(SysOperationLog::createTime) {
                 setHeader("操作时间")
                 width = "180px"
             }
@@ -130,31 +117,29 @@ class OperationLogView(
     }
 
     private fun createPagination() {
-        pagination = PaginationComponent { page -> loadData(page, pageSize) }
+        pagination = PaginationComponent { refresh(it) }
         add(pagination)
     }
 
-    private fun loadData(page: Long, size: Int) {
+    private fun refresh(page: Long = 1) {
         val query = buildQuery()
-        val pageData = logService.pageQuery(Page(page, size.toLong()), query)
+        val pageData = logService.pageQuery(Page(page, pageSize.toLong()), query)
+
         grid.setItems(pageData.records)
         pagination.update(pageData.current, pageData.pages, pageData.total)
     }
 
-    /**
-     * 导出 Excel
-     */
     private fun exportToExcel() {
         runCatching {
             val query = buildQuery()
             val pageData = logService.pageQuery(Page(0, Long.MAX_VALUE), query)
             val records = pageData.records
-            
+
             if (records.isEmpty()) {
                 showError("没有数据可导出")
                 return
             }
-            
+
             val exportData = records.map { log ->
                 OperationLogExportDto(
                     id = log.id,
@@ -168,7 +153,7 @@ class OperationLogView(
                     createTime = log.createTime.formatDateTime()
                 )
             }
-            
+
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
             val fileName = "操作日志_${timestamp}.xlsx"
 
@@ -179,7 +164,7 @@ class OperationLogView(
             showError("导出失败：${e.message}")
         }
     }
-    
+
     private fun buildQuery() = LogQueryDto(
         username = usernameField.value?.trim()?.takeIf { it.isNotBlank() },
         module = moduleField.value?.trim()?.takeIf { it.isNotBlank() },

@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class SysUserService(
     private val userRoleService: SysUserRoleService,
     val roleService: SysRoleService,
-    private val sysPermissionService: SysPermissionService
+    private val permissionService: SysPermissionService
 ) : ServiceImpl<SysUserMapper, SysUser>() {
 
     fun pageQuery(page: Page<SysUser>, query: UserQueryDto): Page<SysUser> {
@@ -98,7 +98,7 @@ class SysUserService(
         roleIds.forEach { roleId ->
             val permIds = roleService.getPermissionIdsByRoleId(roleId)
             if (permIds.isNotEmpty()) {
-                val perms = roleService.permissionService.listByIds(permIds)
+                val perms = permissionService.listByIds(permIds)
                 permissions.addAll(perms.map { it.permCode })
             }
         }

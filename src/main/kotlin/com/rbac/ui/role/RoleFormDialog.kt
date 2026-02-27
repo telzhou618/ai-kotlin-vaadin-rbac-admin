@@ -9,8 +9,6 @@ import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.textfield.TextArea
-import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.validator.StringLengthValidator
 
@@ -19,92 +17,73 @@ class RoleFormDialog(
     private val roleService: SysRoleService,
     private val onSuccess: () -> Unit
 ) : Dialog() {
-    
-    private lateinit var roleCodeField: TextField
-    private lateinit var roleNameField: TextField
-    private lateinit var roleDescField: TextArea
-    
+
     private val binder = Binder(RoleDto::class.java)
-    
+
     init {
         headerTitle = if (role == null) "新增角色" else "编辑角色"
         width = "500px"
-        
-        val dto = if (role != null) {
-            RoleDto(
-                id = role.id,
-                roleCode = role.roleCode,
-                roleName = role.roleName,
-                roleDesc = role.roleDesc
-            )
-        } else {
-            RoleDto()
-        }
-        
+
+        val dto = role?.let {
+            RoleDto(id = it.id, roleCode = it.roleCode, roleName = it.roleName, roleDesc = it.roleDesc)
+        } ?: RoleDto()
+
         verticalLayout {
             dialogContentStyle()
-            
-            roleCodeField = textField("角色编码") {
+
+            textField("角色编码") {
                 width = "100%"
                 prefixComponent = VaadinIcon.CODE.create()
+                binder.forField(this)
+                    .asRequired("角色编码不能为空")
+                    .withValidator(StringLengthValidator("角色编码长度必须在2-50个字符之间", 2, 50))
+                    .bind(RoleDto::roleCode.name)
             }
-            
-            roleNameField = textField("角色名称") {
+
+            textField("角色名称") {
                 width = "100%"
                 prefixComponent = VaadinIcon.TAG.create()
+                binder.forField(this)
+                    .asRequired("角色名称不能为空")
+                    .withValidator(StringLengthValidator("角色名称长度必须在2-50个字符之间", 2, 50))
+                    .bind(RoleDto::roleName.name)
             }
-            
-            roleDescField = textArea("角色描述") {
+
+            textArea("角色描述") {
                 width = "100%"
+                binder.forField(this).bind(RoleDto::roleDesc.name)
             }
         }
-        
-        configureBinder()
+
         binder.readBean(dto)
-        
+
         footer.add(
-            button("取消") {
+            button("取消", VaadinIcon.CLOSE.create()) {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
-            button("保存") {
+            button("保存", VaadinIcon.CHECK.create()) {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                icon = VaadinIcon.CHECK.create()
-                onLeftClick { handleSave() }
+                onLeftClick { save() }
             }
         )
     }
-    
-    private fun configureBinder() {
-        binder.forField(roleCodeField)
-            .asRequired("角色编码不能为空")
-            .withValidator(StringLengthValidator("角色编码长度必须在2-50个字符之间", 2, 50))
-            .bind(RoleDto::roleCode.name)
-        
-        binder.forField(roleNameField)
-            .asRequired("角色名称不能为空")
-            .withValidator(StringLengthValidator("角色名称长度必须在2-50个字符之间", 2, 50))
-            .bind(RoleDto::roleName.name)
-        
-        binder.forField(roleDescField)
-            .bind(RoleDto::roleDesc.name)
-    }
-    
-    private fun handleSave() {
-        if (binder.validate().isOk) {
-            val dto = RoleDto(id = role?.id)
-            binder.writeBean(dto)
-            
-            if (role == null) {
-                roleService.saveRole(dto)
-            } else {
-                roleService.updateRole(dto)
-            }
-            
-            showSuccess("保存成功")
-            close()
-            onSuccess()
+
+    private fun save() {
+        if (!binder.validate().isOk) {
+            return
         }
+
+        val dto = RoleDto(id = role?.id)
+        binder.writeBean(dto)
+
+        if (role == null) {
+            roleService.saveRole(dto)
+        } else {
+            roleService.updateRole(dto)
+        }
+        showSuccess("保存成功")
+        close()
+        onSuccess()
     }
 }

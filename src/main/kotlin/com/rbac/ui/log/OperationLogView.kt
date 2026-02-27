@@ -39,6 +39,7 @@ class OperationLogView(
     private lateinit var startDatePicker: DatePicker
     private lateinit var endDatePicker: DatePicker
     private lateinit var grid: Grid<SysOperationLog>
+    private var pageSize = 20
     private lateinit var pagination: PaginationComponent
 
     init {
@@ -129,7 +130,7 @@ class OperationLogView(
     }
 
     private fun createPagination() {
-        pagination = PaginationComponent { page, size -> loadData(page, size) }
+        pagination = PaginationComponent { page -> loadData(page, pageSize) }
         add(pagination)
     }
 
@@ -137,7 +138,7 @@ class OperationLogView(
         val query = buildQuery()
         val pageData = logService.pageQuery(Page(page, size.toLong()), query)
         grid.setItems(pageData.records)
-        pagination.updatePagination(pageData.current, pageData.pages, pageData.total)
+        pagination.update(pageData.current, pageData.pages)
     }
 
     /**

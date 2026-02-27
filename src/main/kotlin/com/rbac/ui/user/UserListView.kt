@@ -28,6 +28,7 @@ class UserListView(
 
     private lateinit var searchField: TextField
     private lateinit var grid: Grid<UserDto>
+    private var pageSize = 20
     private lateinit var pagination: PaginationComponent
 
     init {
@@ -128,7 +129,7 @@ class UserListView(
     }
 
     private fun createPagination() {
-        pagination = PaginationComponent { page, size -> loadData(page, size) }
+        pagination = PaginationComponent { page -> loadData(page, pageSize) }
         add(pagination)
     }
 
@@ -138,7 +139,7 @@ class UserListView(
 
         val userDtos = pageData.records.map { userService.getUserDto(it) }
         grid.setItems(userDtos)
-        pagination.updatePagination(pageData.current, pageData.pages, pageData.total)
+        pagination.update(pageData.current, pageData.pages)
     }
 
     private fun showFormDialog(user: UserDto?) {
@@ -160,7 +161,7 @@ class UserListView(
         showConfirmDialog("确定要${action}该用户吗？") {
             userService.toggleUserStatus(id, newStatus)
             showSuccess("${action}成功")
-            loadData(pagination.currentPage, 10)
+            loadData(pagination.page, 10)
         }
     }
 }

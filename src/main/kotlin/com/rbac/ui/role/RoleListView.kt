@@ -28,6 +28,7 @@ class RoleListView(
 
     private lateinit var searchField: TextField
     private lateinit var grid: Grid<SysRole>
+    private var pageSize = 20
     private lateinit var pagination: PaginationComponent
 
     init {
@@ -112,7 +113,7 @@ class RoleListView(
     }
 
     private fun createPagination() {
-        pagination = PaginationComponent { page, size -> loadData(page, size) }
+        pagination = PaginationComponent { page -> loadData(page, pageSize) }
         add(pagination)
     }
 
@@ -121,7 +122,7 @@ class RoleListView(
         val pageData = roleService.pageQuery(Page(page, size.toLong()), query)
 
         grid.setItems(pageData.records)
-        pagination.updatePagination(pageData.current, pageData.pages, pageData.total)
+        pagination.update(pageData.current, pageData.pages)
     }
 
     private fun showFormDialog(role: SysRole?) {

@@ -57,10 +57,11 @@ class OperationLogView(
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
 
-            h4("操作日志") { pageTitleStyle() }
+            h4("操作日志") { element.style.set("margin", "0") }
 
             horizontalLayout {
-                searchAreaStyle()
+                alignItems = FlexComponent.Alignment.END
+                isSpacing = true
 
                 usernameField = textField {
                     placeholder = "用户名"
@@ -98,7 +99,7 @@ class OperationLogView(
 
     private fun createGrid() {
         grid = grid {
-            applyStandardStyle()
+            setSizeFull()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
             columnFor(SysOperationLog::id) { setHeader("ID"); width = "80px"; isSortable = true }

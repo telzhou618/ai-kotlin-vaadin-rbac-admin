@@ -6,7 +6,7 @@ import com.github.mvysny.karibudsl.v10.textField
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.rbac.dto.PermissionDto
 import com.rbac.service.SysPermissionService
-import com.rbac.ui.component.dialogContentStyle
+
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
@@ -33,7 +33,8 @@ class PermissionFormDialog(
         val parentPermCode = if (parentId == 0L) "" else parentPerm?.permCode ?: ""
 
         verticalLayout {
-            dialogContentStyle()
+            isPadding = false
+            isSpacing = true
 
             textField("父级权限") {
                 width = "100%"

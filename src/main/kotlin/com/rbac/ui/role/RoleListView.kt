@@ -49,10 +49,11 @@ class RoleListView(
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
 
-            h4("角色管理") { pageTitleStyle() }
+            h4("角色管理") { element.style.set("margin", "0") }
 
             horizontalLayout {
-                searchAreaStyle()
+                alignItems = FlexComponent.Alignment.END
+                isSpacing = true
                 searchField = textField {
                     placeholder = "输入角色名称搜索"
                     width = "250px"
@@ -71,7 +72,7 @@ class RoleListView(
 
     private fun createGrid() {
         grid = grid {
-            applyStandardStyle()
+            setSizeFull()
             setSelectionMode(Grid.SelectionMode.MULTI)
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 

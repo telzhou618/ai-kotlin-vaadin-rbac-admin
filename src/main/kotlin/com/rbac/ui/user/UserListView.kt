@@ -47,10 +47,11 @@ class UserListView(
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
 
-            h4("用户管理") { pageTitleStyle() }
+            h4("用户管理") { element.style.set("margin", "0") }
 
             horizontalLayout {
-                searchAreaStyle()
+                alignItems = FlexComponent.Alignment.END
+                isSpacing = true
                 searchField = textField {
                     placeholder = "输入用户名搜索"
                     width = "250px"
@@ -69,7 +70,7 @@ class UserListView(
 
     private fun createGrid() {
         grid = grid {
-            applyStandardStyle()
+            setSizeFull()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
             columnFor(UserDto::id) { setHeader("ID"); width = "80px"; isSortable = true }

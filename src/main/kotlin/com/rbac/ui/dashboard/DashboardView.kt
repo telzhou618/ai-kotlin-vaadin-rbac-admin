@@ -8,7 +8,7 @@ import com.rbac.entity.SysOperationLog
 import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
-import com.rbac.ui.component.applyStandardStyle
+
 import com.rbac.ui.component.cardStyle
 import com.rbac.ui.component.pageContainerStyle
 import com.rbac.util.formatDateTime
@@ -53,7 +53,7 @@ class DashboardView(
         })
 
         grid<SysOperationLog> {
-            applyStandardStyle()
+            setSizeFull()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
             columnFor(SysOperationLog::username) { setHeader("用户").isAutoWidth = true }

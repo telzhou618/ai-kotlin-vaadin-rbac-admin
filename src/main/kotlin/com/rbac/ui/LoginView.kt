@@ -3,7 +3,7 @@ package com.rbac.ui
 import com.github.mvysny.karibudsl.v10.*
 import com.rbac.service.AuthService
 import com.rbac.service.ThemeService
-import com.rbac.ui.component.dialogContentStyle
+
 import com.rbac.ui.component.loginContainerStyle
 import com.rbac.ui.dashboard.DashboardView
 import com.rbac.util.showError
@@ -83,7 +83,8 @@ class LoginView(
             }
 
             verticalLayout {
-                dialogContentStyle()
+                isPadding = false
+                isSpacing = true
 
                 usernameField = textField() {
                     width = "100%"

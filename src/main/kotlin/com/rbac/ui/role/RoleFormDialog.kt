@@ -4,7 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
-import com.rbac.ui.component.dialogContentStyle
+
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
@@ -29,7 +29,8 @@ class RoleFormDialog(
         } ?: RoleDto()
 
         verticalLayout {
-            dialogContentStyle()
+            isPadding = false
+            isSpacing = true
 
             textField("角色编码") {
                 width = "100%"

@@ -7,7 +7,7 @@ import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.rbac.service.AuthService
 import com.rbac.service.SysUserService
 import com.rbac.ui.LoginView
-import com.rbac.ui.component.dialogContentStyle
+
 import com.rbac.util.showError
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.UI
@@ -39,7 +39,8 @@ class ChangePasswordDialog(
         width = "450px"
 
         verticalLayout {
-            dialogContentStyle()
+            isPadding = false
+            isSpacing = true
 
             passwordField("原密码") {
                 width = "100%"

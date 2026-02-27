@@ -1,9 +1,6 @@
 package com.rbac.ui.component
 
 import com.vaadin.flow.component.HasStyle
-import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.orderedlayout.FlexComponent
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 
 fun VerticalLayout.pageContainerStyle() {
@@ -22,24 +19,6 @@ fun HasStyle.toolbarStyle() {
         set("border-radius", "var(--lumo-border-radius-m)")
         set("padding", "var(--lumo-space-s)")
     }
-}
-
-fun HasStyle.pageTitleStyle() {
-    element.style.set("margin", "0")
-}
-
-fun HorizontalLayout.searchAreaStyle() {
-    alignItems = FlexComponent.Alignment.END
-    isSpacing = true
-}
-
-fun <T> Grid<T>.applyStandardStyle() {
-    setSizeFull()
-}
-
-fun VerticalLayout.dialogContentStyle() {
-    isPadding = false
-    isSpacing = true
 }
 
 fun HasStyle.cardStyle() {
@@ -72,4 +51,8 @@ fun HasStyle.loginContainerStyle() {
         set("padding", "var(--lumo-space-xl)")
         set("box-shadow", "var(--lumo-box-shadow-m)")
     }
+}
+
+fun HasStyle.loginTitleStyle() {
+    element.style.set("margin", "0 0 var(--lumo-space-l) 0")
 }

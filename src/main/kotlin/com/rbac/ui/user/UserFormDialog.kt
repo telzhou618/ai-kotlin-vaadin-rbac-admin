@@ -4,7 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.UserDto
 import com.rbac.service.SysRoleService
 import com.rbac.service.SysUserService
-import com.rbac.ui.component.dialogContentStyle
+
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
@@ -29,7 +29,8 @@ class UserFormDialog(
         val dto = user ?: UserDto(status = 1, roleIds = emptyList())
 
         verticalLayout {
-            dialogContentStyle()
+            isPadding = false
+            isSpacing = true
 
             textField("用户名") {
                 width = "100%"

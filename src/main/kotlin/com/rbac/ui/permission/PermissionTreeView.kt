@@ -43,10 +43,11 @@ class PermissionTreeView(
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
 
-            h4("权限管理") { pageTitleStyle() }
+            h4("权限管理") { element.style.set("margin", "0") }
 
             horizontalLayout {
-                searchAreaStyle()
+                alignItems = FlexComponent.Alignment.END
+                isSpacing = true
                 button("刷新", VaadinIcon.REFRESH.create()) {
                     onLeftClick { refresh() }
                 }
@@ -60,7 +61,7 @@ class PermissionTreeView(
 
     private fun createTreeGrid() {
         treeGrid = TreeGrid<PermissionDto>().apply {
-            applyStandardStyle()
+            setSizeFull()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
             addHierarchyColumn { it.permName }.setHeader("权限名称")

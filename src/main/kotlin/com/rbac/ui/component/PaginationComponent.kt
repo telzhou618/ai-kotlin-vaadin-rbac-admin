@@ -20,9 +20,14 @@ class PaginationComponent(
     private lateinit var nextBtn: Button
     private lateinit var pageNumSpan: Span
     private lateinit var pageTotalSpan: Span
+    private lateinit var totalRecordsSpan: Span
 
     init {
         alignItems = FlexComponent.Alignment.CENTER
+
+        span("共 ")
+        totalRecordsSpan = span("0")
+        span(" 条 ")
 
         prevBtn = button {
             icon = VaadinIcon.ANGLE_LEFT.create()
@@ -45,11 +50,12 @@ class PaginationComponent(
         updateStates()
     }
 
-    fun update(current: Long, total: Long) {
+    fun update(current: Long, total: Long, records: Long = 0) {
         page = current
         totalPages = total.coerceAtLeast(1)
         pageNumSpan.text = "$page"
         pageTotalSpan.text = "$totalPages"
+        totalRecordsSpan.text = "$records"
         updateStates()
     }
 

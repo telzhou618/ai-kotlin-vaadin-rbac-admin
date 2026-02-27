@@ -122,7 +122,7 @@ class RoleListView(
         val pageData = roleService.pageQuery(Page(page, size.toLong()), query)
 
         grid.setItems(pageData.records)
-        pagination.update(pageData.current, pageData.pages)
+        pagination.update(pageData.current, pageData.pages, pageData.total)
     }
 
     private fun showFormDialog(role: SysRole?) {

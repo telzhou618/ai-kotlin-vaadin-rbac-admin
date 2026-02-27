@@ -138,7 +138,7 @@ class OperationLogView(
         val query = buildQuery()
         val pageData = logService.pageQuery(Page(page, size.toLong()), query)
         grid.setItems(pageData.records)
-        pagination.update(pageData.current, pageData.pages)
+        pagination.update(pageData.current, pageData.pages, pageData.total)
     }
 
     /**

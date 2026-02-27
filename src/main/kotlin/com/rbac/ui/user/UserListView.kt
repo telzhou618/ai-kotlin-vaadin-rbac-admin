@@ -139,7 +139,7 @@ class UserListView(
 
         val userDtos = pageData.records.map { userService.getUserDto(it) }
         grid.setItems(userDtos)
-        pagination.update(pageData.current, pageData.pages)
+        pagination.update(pageData.current, pageData.pages, pageData.total)
     }
 
     private fun showFormDialog(user: UserDto?) {

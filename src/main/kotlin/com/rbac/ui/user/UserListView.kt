@@ -81,7 +81,8 @@ class UserListView(
                     badgeStyle(user.status == 1)
                 }
             }.apply {
-                setHeader("状态"); width = "100px"; textCenter()
+                setHeader("状态")
+                width = "100px"
             }
 
             addComponentColumn { user ->

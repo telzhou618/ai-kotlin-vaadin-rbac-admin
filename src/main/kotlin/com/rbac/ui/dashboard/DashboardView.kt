@@ -9,7 +9,7 @@ import com.rbac.service.DashboardService
 import com.rbac.service.SysOperationLogService
 import com.rbac.ui.MainLayout
 import com.rbac.ui.component.applyStandardStyle
-import com.rbac.ui.component.cardHoverStyle
+import com.rbac.ui.component.cardStyle
 import com.rbac.ui.component.pageContainerStyle
 import com.rbac.util.formatDateTime
 import com.vaadin.flow.component.grid.GridVariant
@@ -82,7 +82,7 @@ class DashboardView(
         colorTheme: String
     ): Div {
         return Div().apply {
-            cardHoverStyle()
+            cardStyle()
             width = "25%"
             element.style.set("cursor", "default")
 

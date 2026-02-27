@@ -7,12 +7,8 @@ import com.rbac.service.SysUserService
 import com.rbac.ui.component.dialogContentStyle
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
-import com.vaadin.flow.component.checkbox.CheckboxGroup
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.select.Select
-import com.vaadin.flow.component.textfield.PasswordField
-import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.validator.StringLengthValidator
 
@@ -22,118 +18,80 @@ class UserFormDialog(
     private val roleService: SysRoleService,
     private val onSuccess: () -> Unit
 ) : Dialog() {
-    
-    private lateinit var usernameField: TextField
-    private lateinit var passwordField: PasswordField
-    private lateinit var statusSelect: Select<Int>
-    private lateinit var roleCheckbox: CheckboxGroup<Long>
-    
+
     private val binder = Binder(UserDto::class.java)
-    
+
     init {
         headerTitle = if (user == null) "新增用户" else "编辑用户"
         width = "500px"
-        
+
         val roles = roleService.list()
         val dto = user ?: UserDto(status = 1, roleIds = emptyList())
-        
+
         verticalLayout {
             dialogContentStyle()
-            
-            usernameField = textField("用户名") {
+
+            textField("用户名") {
                 width = "100%"
                 prefixComponent = VaadinIcon.USER.create()
+                binder.forField(this)
+                    .asRequired("用户名不能为空")
+                    .withValidator(StringLengthValidator("用户名长度必须在2-20个字符之间", 2, 20))
+                    .bind(UserDto::username.name)
             }
-            
-            passwordField = passwordField("密码") {
+
+            passwordField("密码") {
                 width = "100%"
                 placeholder = if (user == null) "请输入密码" else "留空则不修改"
                 prefixComponent = VaadinIcon.LOCK.create()
+                binder.forField(this)
+                    .withValidator({ it.isNullOrBlank() == (user != null) }, "新增用户时密码不能为空")
+                    .withValidator({ it.isNullOrBlank() || it.length >= 6 }, "密码长度至少6个字符")
+                    .bind(UserDto::password.name)
             }
-            
-            statusSelect = select("状态") {
+
+            select<Int>("状态") {
                 width = "100%"
                 setItems(1, 0)
                 setItemLabelGenerator { if (it == 1) "启用" else "禁用" }
+                binder.forField(this).asRequired().bind(UserDto::status.name)
             }
-            
-            roleCheckbox = CheckboxGroup<Long>().apply {
+
+            checkBoxGroup<Long>() {
                 label = "分配角色"
                 width = "100%"
                 setItems(roles.map { it.id!! })
-                setItemLabelGenerator { roleId ->
-                    roles.find { it.id == roleId }?.roleName ?: ""
-                }
+                setItemLabelGenerator { roleId -> roles.find { it.id == roleId }?.roleName ?: "" }
+                binder.forField(this)
+                    .withConverter({ it?.toList() ?: emptyList() }, { it?.toSet() ?: emptySet() })
+                    .bind(UserDto::roleIds.name)
             }
-            add(roleCheckbox)
         }
-        
-        configureBinder()
+
         binder.readBean(dto)
-        
+
         footer.add(
-            button("取消") {
+            button("取消", VaadinIcon.CLOSE.create()) {
                 addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                icon = VaadinIcon.CLOSE.create()
                 onLeftClick { close() }
             },
-            button("保存") {
+            button("保存", VaadinIcon.CHECK.create()) {
                 addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                icon = VaadinIcon.CHECK.create()
-                onLeftClick { handleSave() }
+                onLeftClick { save() }
             }
         )
     }
-    
-    private fun configureBinder() {
-        binder.forField(usernameField)
-            .asRequired("用户名不能为空")
-            .withValidator(StringLengthValidator("用户名长度必须在2-20个字符之间", 2, 20))
-            .bind(UserDto::username.name)
-        
-        binder.forField(passwordField)
-            .withValidator({ value ->
-                if (user == null) {
-                    !value.isNullOrBlank()
-                } else {
-                    true
-                }
-            }, "新增用户时密码不能为空")
-            .withValidator({ value ->
-                if (!value.isNullOrBlank()) {
-                    value.length >= 6
-                } else {
-                    true
-                }
-            }, "密码长度至少6个字符")
-            .bind(UserDto::password.name)
-        
-        binder.forField(statusSelect)
-            .asRequired("请选择状态")
-            .bind(UserDto::status.name)
-        
-        binder.forField(roleCheckbox)
-            .withConverter(
-                { it?.toList() ?: emptyList() },
-                { it?.toSet() ?: emptySet() }
-            )
-            .bind(UserDto::roleIds.name)
-    }
-    
-    private fun handleSave() {
-        if (binder.validate().isOk) {
-            val dto = UserDto(id = user?.id)
-            binder.writeBean(dto)
-            
-            if (user == null) {
-                userService.saveUser(dto)
-            } else {
-                userService.updateUser(dto)
-            }
-            
-            showSuccess("保存成功")
-            close()
-            onSuccess()
-        }
+
+    private fun save() {
+        if (!binder.validate().isOk) return
+
+        val dto = UserDto(id = user?.id)
+        binder.writeBean(dto)
+
+        if (user == null) userService.saveUser(dto) else userService.updateUser(dto)
+
+        showSuccess("保存成功")
+        close()
+        onSuccess()
     }
 }

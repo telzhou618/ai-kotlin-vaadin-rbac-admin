@@ -26,18 +26,17 @@ class UserListView(
     private val userService: SysUserService
 ) : VerticalLayout() {
 
+    private val pageSize = 20
     private lateinit var searchField: TextField
     private lateinit var grid: Grid<UserDto>
-    private var pageSize = 20
     private lateinit var pagination: PaginationComponent
 
     init {
         pageContainerStyle()
-        
         createToolbar()
         createGrid()
         createPagination()
-        loadData(1, 20)
+        refresh()
     }
 
     private fun createToolbar() {
@@ -47,11 +46,9 @@ class UserListView(
             justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
             alignItems = FlexComponent.Alignment.CENTER
             toolbarStyle()
-            
-            h4("用户管理") {
-                pageTitleStyle()
-            }
-            
+
+            h4("用户管理") { pageTitleStyle() }
+
             horizontalLayout {
                 searchAreaStyle()
                 searchField = textField {
@@ -59,13 +56,11 @@ class UserListView(
                     width = "250px"
                     isClearButtonVisible = true
                 }
-                button("查询") {
-                    icon = VaadinIcon.SEARCH.create()
-                    onLeftClick { loadData(1, 20) }
+                button("查询", VaadinIcon.SEARCH.create()) {
+                    onLeftClick { refresh() }
                 }
-                button("新增") {
+                button("新增", VaadinIcon.PLUS.create()) {
                     addThemeVariants(ButtonVariant.LUMO_PRIMARY)
-                    icon = VaadinIcon.PLUS.create()
                     onLeftClick { showFormDialog(null) }
                 }
             }
@@ -77,11 +72,7 @@ class UserListView(
             applyStandardStyle()
             addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_WRAP_CELL_CONTENT)
 
-            columnFor(UserDto::id) {
-                setHeader("ID")
-                width = "80px"
-                isSortable = true
-            }
+            columnFor(UserDto::id) { setHeader("ID"); width = "80px"; isSortable = true }
             columnFor(UserDto::username) { setHeader("用户名") }
             columnFor(UserDto::roleNames) { setHeader("角色") }
 
@@ -90,78 +81,75 @@ class UserListView(
                     badgeStyle(user.status == 1)
                 }
             }.apply {
-                setHeader("状态")
-                width = "100px"
-                textCenter()
+                setHeader("状态"); width = "100px"; textCenter()
             }
 
             addComponentColumn { user ->
                 horizontalLayout {
                     isSpacing = true
                     element.style.set("gap", "var(--lumo-space-xs)")
-                    
+
                     button("编辑") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_PRIMARY)
                         icon = VaadinIcon.EDIT.create()
                         onLeftClick { showFormDialog(user) }
                     }
 
-                    button(if (user.status == 1) "禁用" else "启用") {
+                    val enable = user.status == 1
+                    button(if (enable) "禁用" else "启用") {
                         addThemeVariants(
                             ButtonVariant.LUMO_SMALL,
-                            if (user.status == 1) ButtonVariant.LUMO_CONTRAST else ButtonVariant.LUMO_SUCCESS
+                            if (enable) ButtonVariant.LUMO_CONTRAST else ButtonVariant.LUMO_SUCCESS
                         )
-                        icon = if (user.status == 1) VaadinIcon.BAN.create() else VaadinIcon.CHECK_CIRCLE.create()
-                        onLeftClick { handleToggleStatus(user.id!!, if (user.status == 1) 0 else 1) }
+                        icon = if (enable) VaadinIcon.BAN.create() else VaadinIcon.CHECK_CIRCLE.create()
+                        onLeftClick {
+                            toggleStatus(user.id!!, if (enable) 0 else 1)
+                        }
                     }
 
                     button("删除") {
                         addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_ERROR)
                         icon = VaadinIcon.TRASH.create()
-                        onLeftClick { handleDelete(user.id!!) }
+                        onLeftClick {
+                            delete(user.id!!)
+                        }
                     }
                 }
-            }.apply {
-                setHeader("操作")
-                width = "280px"
-            }
+            }.apply { setHeader("操作"); width = "280px" }
         }
     }
 
     private fun createPagination() {
-        pagination = PaginationComponent { page -> loadData(page, pageSize) }
+        pagination = PaginationComponent { refresh(it) }
         add(pagination)
     }
 
-    private fun loadData(page: Long, size: Int) {
+    private fun refresh(page: Long = 1) {
         val query = UserQueryDto(username = searchField.value?.trim()?.takeIf { it.isNotBlank() })
-        val pageData = userService.pageQuery(Page(page, size.toLong()), query)
+        val pageData = userService.pageQuery(Page(page, pageSize.toLong()), query)
 
-        val userDtos = pageData.records.map { userService.getUserDto(it) }
-        grid.setItems(userDtos)
+        grid.setItems(pageData.records.map { userService.getUserDto(it) })
         pagination.update(pageData.current, pageData.pages, pageData.total)
     }
 
     private fun showFormDialog(user: UserDto?) {
-        UserFormDialog(user, userService, userService.roleService) {
-            loadData(1, 20)
-        }.open()
+        UserFormDialog(user, userService, userService.roleService) { refresh() }.open()
     }
 
-    private fun handleDelete(id: Long) {
+    private fun delete(id: Long) {
         showConfirmDialog("确定要删除该用户吗？") {
             userService.deleteUser(id)
             showSuccess("删除成功")
-            loadData(1, 20)
+            refresh()
         }
     }
 
-    private fun handleToggleStatus(id: Long, newStatus: Int) {
+    private fun toggleStatus(id: Long, newStatus: Int) {
         val action = if (newStatus == 1) "启用" else "禁用"
         showConfirmDialog("确定要${action}该用户吗？") {
             userService.toggleUserStatus(id, newStatus)
             showSuccess("${action}成功")
-            loadData(pagination.page, 10)
+            refresh(pagination.page)
         }
     }
 }

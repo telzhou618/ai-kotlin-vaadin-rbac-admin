@@ -16,16 +16,16 @@ fun VerticalLayout.pageContainerStyle() {
     }
 }
 
-fun HasStyle.pageTitleStyle() {
-    element.style.set("margin", "0")
-}
-
 fun HasStyle.toolbarStyle() {
     element.style.apply {
         set("background", "var(--lumo-contrast-5pct)")
         set("border-radius", "var(--lumo-border-radius-m)")
         set("padding", "var(--lumo-space-s)")
     }
+}
+
+fun HasStyle.pageTitleStyle() {
+    element.style.set("margin", "0")
 }
 
 fun HorizontalLayout.searchAreaStyle() {
@@ -72,8 +72,4 @@ fun HasStyle.loginContainerStyle() {
         set("padding", "var(--lumo-space-xl)")
         set("box-shadow", "var(--lumo-box-shadow-m)")
     }
-}
-
-fun HasStyle.loginTitleStyle() {
-    element.style.set("margin", "0 0 var(--lumo-space-l) 0")
 }

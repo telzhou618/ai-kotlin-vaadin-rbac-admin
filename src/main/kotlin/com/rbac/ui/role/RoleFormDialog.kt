@@ -4,12 +4,12 @@ import com.github.mvysny.karibudsl.v10.*
 import com.rbac.dto.RoleDto
 import com.rbac.entity.SysRole
 import com.rbac.service.SysRoleService
-
+import com.rbac.util.showError
 import com.rbac.util.showSuccess
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.binder.BeanValidationBinder
 import com.vaadin.flow.data.validator.StringLengthValidator
 
 class RoleFormDialog(
@@ -18,7 +18,7 @@ class RoleFormDialog(
     private val onSuccess: () -> Unit
 ) : Dialog() {
 
-    private val binder = Binder(RoleDto::class.java)
+    private val binder = BeanValidationBinder(RoleDto::class.java)
 
     init {
         headerTitle = if (role == null) "新增角色" else "编辑角色"
@@ -52,7 +52,8 @@ class RoleFormDialog(
 
             textArea("角色描述") {
                 width = "100%"
-                binder.forField(this).bind(RoleDto::roleDesc.name)
+                binder.forField(this)
+                    .bind(RoleDto::roleDesc.name)
             }
         }
 
@@ -71,20 +72,19 @@ class RoleFormDialog(
     }
 
     private fun save() {
-        if (!binder.validate().isOk) {
-            return
-        }
-
         val dto = RoleDto(id = role?.id)
-        binder.writeBean(dto)
-
-        if (role == null) {
-            roleService.saveRole(dto)
+        // 验证前端、后端、表单数据写入bean
+        if (binder.writeBeanIfValid(dto)) {
+            if (role == null) {
+                roleService.saveRole(dto)
+            } else {
+                roleService.updateRole(dto)
+            }
+            showSuccess("保存成功")
+            close()
+            onSuccess()
         } else {
-            roleService.updateRole(dto)
+            showError("表单验证失败, 请检查输入")
         }
-        showSuccess("保存成功")
-        close()
-        onSuccess()
     }
 }

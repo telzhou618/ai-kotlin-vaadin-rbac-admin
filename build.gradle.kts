@@ -54,6 +54,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // bean验证框架
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 dependencyManagement {

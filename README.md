@@ -6,7 +6,7 @@
 
 - **后端**: Spring Boot 3.2.1 + Kotlin 1.9.21 + MyBatis-Plus 3.5.5 + Sa-Token 1.37.0
 - **前端**: Vaadin 24.3.0 + Karibu DSL 2.1.2
-- **数据库**: MySQL 8.0+
+- **数据库**: MySQL 8.0+ / Redis 7.0+
 - **构建**: Gradle 8.x
 
 ## 功能特性
@@ -19,6 +19,7 @@
 - ✅ 权限控制（动态菜单、路由拦截、注解验证）
 - ✅ 首页仪表盘（数据统计、最近日志）
 - ✅ 主题切换（Lumo 明暗模式、会话持久化）
+- ✅ 会话持久化（Redis 存储，应用重启后保持登录状态）
 
 ## 项目截图
 
@@ -58,6 +59,7 @@ src/main/kotlin/com/rbac/
 
 - JDK 17+
 - MySQL 8.0+
+- Redis 7.0+（用于会话持久化）
 - Gradle 8.x
 
 ### 2. 初始化数据库
@@ -67,7 +69,17 @@ mysql -u root -p < sql/db-init.sql
 mysql -u root -p < sql/db-init-data.sql
 ```
 
-### 3. 配置数据库
+### 3. 启动 Redis
+
+```bash
+# 使用 Docker 启动（推荐）
+docker run -d --name rbac-redis -p 6379:6379 redis:7-alpine
+
+# 或使用本地 Redis
+redis-server
+```
+
+### 4. 配置数据库
 
 修改 `src/main/resources/application.yml`：
 
@@ -77,9 +89,14 @@ spring:
     url: jdbc:mysql://localhost:3306/rbac_db
     username: root
     password: root  # 修改为你的密码
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:      # 如果 Redis 设置了密码，在这里填写
 ```
 
-### 4. 运行项目（开发模式）
+### 5. 运行项目（开发模式）
 
 ```bash
 # Windows
@@ -89,7 +106,7 @@ gradlew.bat bootRun
 ./gradlew bootRun
 ```
 
-### 5. 访问系统
+### 6. 访问系统
 
 浏览器访问: http://localhost:8080
 
@@ -210,12 +227,34 @@ binder.forField(usernameField)
 
 详细说明请查看 [主题功能文档](docs/THEME_FEATURE.md)
 
+## Redis 会话持久化
+
+系统使用 Redis 存储用户会话（Sa-Token），实现以下特性：
+
+- **应用重启后保持登录状态**：用户无需重新登录
+- **分布式会话支持**：可部署多个应用实例共享会话
+- **Token 自动过期**：支持配置会话超时时间
+
+### 快速验证
+
+```bash
+# 1. 登录系统后查看 Redis 中的会话
+redis-cli keys "satoken:*"
+
+# 2. 重启应用后刷新浏览器，应仍保持登录状态
+```
+
+详细文档：
+- [Redis 会话持久化配置指南](docs/REDIS_SESSION_GUIDE.md)
+- [Redis 快速测试](docs/REDIS_QUICK_TEST.md)
+
 ## 注意事项
 
 - 密码使用 MD5 加密存储
 - 权限在登录时缓存，修改后需重新登录
 - 默认端口 8080，如有冲突请修改配置
 - 主题选择保存在会话中，关闭浏览器后会重置
+- **Redis 是必需依赖**：启动前请确保 Redis 已启动，否则应用无法正常登录
 
 ## License
 

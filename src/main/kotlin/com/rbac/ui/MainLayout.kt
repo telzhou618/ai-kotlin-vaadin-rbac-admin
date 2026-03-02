@@ -38,6 +38,7 @@ class MainLayout(
 
     init {
         themeService.initTheme()
+        primarySection = Section.NAVBAR
         createHeader()
         createDrawer()
     }
